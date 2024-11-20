@@ -1,3 +1,31 @@
+### Date : 11/20/24
+
+Goals:
+
+- Map variants using phased data from pb-WGS-wdl outputs (these are all phased)
+- This will require merging variant files for each type and applying QC.
+- Map variants for all types available.
+- Include count of input regins, input variants, and outputs.
+
+
+#### Variant file preparation
+
+1) Compile sample data from sample directories
+
+- sample_phased_small_variant_vcfs
+- sample_phased_sv_vcfs
+- hificnv_vcfs
+- trgt_repeat_vcf
+* See "/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results" for compiled data
+
+2) Merge VCFs and apply soft QC
+3) Map to candidate regions
+
+
+
+
+
+
 ### Date : 11/19/24
 
 This test run will use a new set of intial segmentation paramters to enhance resolution (purposeful over segmentation) and boost the generation of query regions.
