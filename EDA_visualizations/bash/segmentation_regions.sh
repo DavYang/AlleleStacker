@@ -12,10 +12,12 @@
 source /public/apps/conda3/etc/profile.d/conda.sh
 conda activate anc_vig
 
-INPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/simple_allele-stacker/segmentation_regions"
-OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/simple_allele-stacker/EDA_visualizations/outputs/segmentation_EDA/region_counts"
+INPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/outputs/segmentation_regions"
+OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/EDA_visualizations/outputs/segmentation_EDA/region_counts"
 
-# Get the list of sample names
+mkdir -p $OUTPUT_DIR
+
+ # Get the list of sample names
 SAMPLES=($(ls $INPUT_DIR/*.meth_regions.bed | xargs -n 1 basename | sed 's/\.meth_regions\.bed//'))
 
 # Get the current sample based on the array task ID

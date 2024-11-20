@@ -1,0 +1,701 @@
+chrom	start	end	meth_score	score_calculation	num_methylated	num_unmethylated	total_samples	meth_proportion	unmeth_proportion	proportion_diff	sample_weight	score_interpretation	methylated_samples	unmethylated_samples	haplotype
+chr1	1228068	1228100	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM276-1	H1
+chr1	1649931	1649975	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM276-1	H1
+chr1	1972713	1972716	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM187	H1
+chr1	2084404	2084407	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM180	H1
+chr1	2093889	2093894	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM187,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM198	H1
+chr1	2210426	2210465	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM180	H1
+chr1	2242960	2242998	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM187,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM198	H1
+chr1	2260422	2260469	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM231,SPM232,SPM248,SPM276-1	SPM212	H1
+chr1	2295903	2295932	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM187	H1
+chr1	2365918	2366021	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM187	H1
+chr1	2388648	2388756	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM231,SPM232,SPM248,SPM276-1	SPM212	H1
+chr1	3302854	3302871	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM187	H1
+chr1	5944706	5944785	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM187	H1
+chr1	6313999	6314041	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM187	H1
+chr1	6540743	6540757	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM161	H1
+chr1	6547061	6547175	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM180	H1
+chr1	6550091	6550100	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM276-1	H1
+chr1	6929507	6929512	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM231,SPM232,SPM248,SPM276-1	SPM212	H1
+chr1	7803371	7803460	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM232,SPM248,SPM276-1	SPM231	H1
+chr1	8395191	8395283	-2.933151136953673	"Total Samples: 11
+Methylated: 1 (0.091)
+Unmethylated: 10 (0.909)
+Proportion Difference: -0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: -0.818 × 3.585 = -2.933
+Interpretation: Strongly Unmethylated"	1	10	11	0.09090909090909091	0.9090909090909091	-0.8181818181818181	3.584962500721156	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	H1
+chr1	8579806	8579832	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM187	H1
+chr1	8962408	8962501	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM187	H1
+chr1	8975560	8975563	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM161	H1
+chr1	9067165	9067567	-2.933151136953673	"Total Samples: 11
+Methylated: 1 (0.091)
+Unmethylated: 10 (0.909)
+Proportion Difference: -0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: -0.818 × 3.585 = -2.933
+Interpretation: Strongly Unmethylated"	1	10	11	0.09090909090909091	0.9090909090909091	-0.8181818181818181	3.584962500721156	Strongly Unmethylated	SPM161	SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	H1
+chr1	9357885	9357901	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM180	H1
+chr1	9527548	9527576	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM187,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM198	H1
+chr1	10462103	10462109	2.933151136953673	"Total Samples: 11
+Methylated: 10 (0.909)
+Unmethylated: 1 (0.091)
+Proportion Difference: 0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: 0.818 × 3.585 = 2.933
+Interpretation: Strongly Methylated"	10	1	11	0.9090909090909091	0.09090909090909091	0.8181818181818181	3.584962500721156	Strongly Methylated	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	SPM187	H1
+chr1	22773974	22774515	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM187	SPM161,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	H1
+chr1	24417292	24417470	-2.933151136953673	"Total Samples: 11
+Methylated: 1 (0.091)
+Unmethylated: 10 (0.909)
+Proportion Difference: -0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: -0.818 × 3.585 = -2.933
+Interpretation: Strongly Unmethylated"	1	10	11	0.09090909090909091	0.9090909090909091	-0.8181818181818181	3.584962500721156	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	H1
+chr1	28832965	28833029	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	H1
+chr1	51214693	51214915	-2.933151136953673	"Total Samples: 11
+Methylated: 1 (0.091)
+Unmethylated: 10 (0.909)
+Proportion Difference: -0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: -0.818 × 3.585 = -2.933
+Interpretation: Strongly Unmethylated"	1	10	11	0.09090909090909091	0.9090909090909091	-0.8181818181818181	3.584962500721156	Strongly Unmethylated	SPM187	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	H1
+chr1	54856264	54856724	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	H1
+chr1	119041091	119041133	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM187	SPM161,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	H1
+chr1	119646107	119646122	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM231,SPM232,SPM248,SPM276-1	H1
+chr1	148874544	148874855	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	H1
+chr1	164918023	164918026	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM212,SPM231,SPM232,SPM248,SPM276-1	H1
+chr1	171441483	171441766	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM276-1	H1
+chr1	184416782	184417282	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM276-1	SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H1
+chr1	208281020	208281414	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM161	SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	H1
+chr1	211616564	211617521	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM202	SPM161,SPM180,SPM187,SPM198,SPM206,SPM212,SPM231,SPM232,SPM276-1	H1
+chr1	216485621	216486879	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM276-1	SPM161,SPM180,SPM187,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H1
+chr1	216564342	216564634	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM276-1	H1
+chr1	229787244	229787251	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM248,SPM276-1	H1
+chr2	113842922	113843851	-2.933151136953673	"Total Samples: 11
+Methylated: 1 (0.091)
+Unmethylated: 10 (0.909)
+Proportion Difference: -0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: -0.818 × 3.585 = -2.933
+Interpretation: Strongly Unmethylated"	1	10	11	0.09090909090909091	0.9090909090909091	-0.8181818181818181	3.584962500721156	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	H1
+chr2	148782263	148782352	-2.933151136953673	"Total Samples: 11
+Methylated: 1 (0.091)
+Unmethylated: 10 (0.909)
+Proportion Difference: -0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: -0.818 × 3.585 = -2.933
+Interpretation: Strongly Unmethylated"	1	10	11	0.09090909090909091	0.9090909090909091	-0.8181818181818181	3.584962500721156	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	H1
+chr3	56930195	56930917	-2.933151136953673	"Total Samples: 11
+Methylated: 1 (0.091)
+Unmethylated: 10 (0.909)
+Proportion Difference: -0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: -0.818 × 3.585 = -2.933
+Interpretation: Strongly Unmethylated"	1	10	11	0.09090909090909091	0.9090909090909091	-0.8181818181818181	3.584962500721156	Strongly Unmethylated	SPM187	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248,SPM276-1	H1
+chr3	65831488	65831650	-2.933151136953673	"Total Samples: 11
+Methylated: 1 (0.091)
+Unmethylated: 10 (0.909)
+Proportion Difference: -0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: -0.818 × 3.585 = -2.933
+Interpretation: Strongly Unmethylated"	1	10	11	0.09090909090909091	0.9090909090909091	-0.8181818181818181	3.584962500721156	Strongly Unmethylated	SPM248	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM276-1	H1
+chr5	154164888	154165027	-2.933151136953673	"Total Samples: 11
+Methylated: 1 (0.091)
+Unmethylated: 10 (0.909)
+Proportion Difference: -0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: -0.818 × 3.585 = -2.933
+Interpretation: Strongly Unmethylated"	1	10	11	0.09090909090909091	0.9090909090909091	-0.8181818181818181	3.584962500721156	Strongly Unmethylated	SPM276-1	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H1
+chr8	124752015	124752219	-2.933151136953673	"Total Samples: 11
+Methylated: 1 (0.091)
+Unmethylated: 10 (0.909)
+Proportion Difference: -0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: -0.818 × 3.585 = -2.933
+Interpretation: Strongly Unmethylated"	1	10	11	0.09090909090909091	0.9090909090909091	-0.8181818181818181	3.584962500721156	Strongly Unmethylated	SPM276-1	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H1
+chr13	60922658	60922794	-2.933151136953673	"Total Samples: 11
+Methylated: 1 (0.091)
+Unmethylated: 10 (0.909)
+Proportion Difference: -0.818
+Sample Weight (log2(total + 1)): 3.585
+Final Score: -0.818 × 3.585 = -2.933
+Interpretation: Strongly Unmethylated"	1	10	11	0.09090909090909091	0.9090909090909091	-0.8181818181818181	3.584962500721156	Strongly Unmethylated	SPM276-1	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H1
+chr1	802427	802452	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM180	H2
+chr1	1126126	1126129	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM180	H2
+chr1	1222579	1222593	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM180,SPM187,SPM198,SPM202,SPM212,SPM231,SPM232,SPM248	SPM206	H2
+chr1	1541717	1541721	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM248	SPM232	H2
+chr1	1774696	1774720	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM180,SPM187,SPM198,SPM206,SPM212,SPM231,SPM232,SPM248	SPM202	H2
+chr1	1946546	1947019	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM187	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr1	2215706	2215723	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM187	H2
+chr1	2286714	2286732	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM180	H2
+chr1	2304215	2304222	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM231,SPM232,SPM248	SPM212	H2
+chr1	2516350	2516376	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM180,SPM187,SPM198,SPM206,SPM212,SPM231,SPM232,SPM248	SPM202	H2
+chr1	3071878	3072805	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr1	3823861	3823908	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM232,SPM248	SPM231	H2
+chr1	3879556	3879570	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM161	H2
+chr1	7051086	7051111	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM187	H2
+chr1	7431952	7431962	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM180	H2
+chr1	7495202	7495212	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232	SPM248	H2
+chr1	7732568	7732575	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM187	H2
+chr1	8022193	8022201	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM187	H2
+chr1	8102651	8102670	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM180,SPM187,SPM198,SPM206,SPM212,SPM231,SPM232,SPM248	SPM202	H2
+chr1	8125133	8125263	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM161	H2
+chr1	8312869	8312888	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM180	H2
+chr1	9139591	9139759	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM180	H2
+chr1	9160283	9160411	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM180	H2
+chr1	9304860	9304892	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM180	H2
+chr1	9683734	9683757	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM180	H2
+chr1	9808690	9808697	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM180,SPM187,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM198	H2
+chr1	10165295	10165371	2.767545294909838	"Total Samples: 10
+Methylated: 9 (0.900)
+Unmethylated: 1 (0.100)
+Proportion Difference: 0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: 0.800 × 3.459 = 2.768
+Interpretation: Strongly Methylated"	9	1	10	0.9	0.1	0.8	3.4594316186372973	Strongly Methylated	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	SPM187	H2
+chr1	17149110	17149619	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr1	65429861	65430157	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM232	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM248	H2
+chr1	156686263	156686590	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr2	23656120	23656920	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr2	120576602	120577206	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr2	152513806	152513810	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM232	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM248	H2
+chr3	177597341	177597800	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM187	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr4	25650190	25650724	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr6	1625812	1626674	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr6	3000415	3000731	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM198	SPM161,SPM180,SPM187,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr6	4914309	4914773	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr6	36927712	36928095	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM187	SPM161,SPM180,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr6	134882472	134882781	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM231	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM232,SPM248	H2
+chr7	232647	233178	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr7	142519898	142520187	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM161	SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr7	151939656	151940017	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr7	158330080	158331275	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM206	SPM161,SPM180,SPM187,SPM198,SPM202,SPM212,SPM231,SPM232,SPM248	H2
+chr8	143174924	143175408	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr9	35035928	35036858	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr9	138220732	138221079	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr10	84878341	84878466	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM248	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232	H2
+chr10	103850110	103850446	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM180	SPM161,SPM187,SPM198,SPM202,SPM206,SPM212,SPM231,SPM232,SPM248	H2
+chr11	27392216	27392648	-2.767545294909838	"Total Samples: 10
+Methylated: 1 (0.100)
+Unmethylated: 9 (0.900)
+Proportion Difference: -0.800
+Sample Weight (log2(total + 1)): 3.459
+Final Score: -0.800 × 3.459 = -2.768
+Interpretation: Strongly Unmethylated"	1	9	10	0.1	0.9	-0.8	3.4594316186372973	Strongly Unmethylated	SPM212	SPM161,SPM180,SPM187,SPM198,SPM202,SPM206,SPM231,SPM232,SPM248	H2

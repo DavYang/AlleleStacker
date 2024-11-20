@@ -1,16 +1,16 @@
 #!/bin/bash
 #SBATCH --job-name=submit-jobs
 #SBATCH --time=00:10:00
-#SBATCH --partition=normal
+#SBATCH --partition=quick
 #SBATCH --nodes=1
 #SBATCH --mem=4gb
 #SBATCH --output=submit_jobs.%A_%a.out
 
 # Define the paths
 main_dir="/gs/gsfs0/users/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/cpg_pileup_beds"
-output_dir="/gs/gsfs0/shared-lab/greally-lab/David/simple_allele-stacker/outputs/segmentation_regions"
-log_out="/gs/gsfs0/shared-lab/greally-lab/David/simple_allele-stacker/outputs/segmentation_regions/log_files"
-scripts_dir="/gs/gsfs0/shared-lab/greally-lab/David/simple_allele-stacker/outputs/segmentation_regions/segmentation_scripts"
+output_dir="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/outputs/segmentation_regions"
+log_out="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/outputs/segmentation_regions/log_files"
+scripts_dir="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/outputs/segmentation_regions/segmentation_scripts"
 
 mkdir -p "$output_dir"
 mkdir -p "$log_out"
@@ -36,10 +36,10 @@ for sample_dir in "$main_dir"/*; do
     cat > "$slurm_script" <<EOL
 #!/bin/bash
 #SBATCH --job-name=${job_name}
-#SBATCH --time=2-00:00:00 
-#SBATCH --partition=normal
+#SBATCH --time=4:00:00 
+#SBATCH --partition=quick
 #SBATCH --nodes=1
-#SBATCH --mem=64gb
+#SBATCH --mem=16gb
 #SBATCH --output=${log_out}/${job_name}.segment.%A_%a.out
 
 source /public/apps/conda3/etc/profile.d/conda.sh
@@ -58,7 +58,7 @@ if [ \${#bed_files[@]} -eq 0 ]; then
 fi
 
 echo "Running segmentation for \${bed_files[@]}"
-"${methbat}" segment --input-prefix "${sample_name}.GRCh38" --output-prefix "${output_dir}/${sample_name}" --enable-haplotype-segmentation --condense-bed-labels --min-cpgs 5 --max-gap 500
+"${methbat}" segment --input-prefix "${sample_name}.GRCh38" --output-prefix "${output_dir}/${sample_name}" --enable-haplotype-segmentation --condense-bed-labels --min-cpgs 2 --max-gap 200
 
 if [ \$? -ne 0 ]; then
     echo "Error: command failed for \${bed_files[@]} with exit code \$?"

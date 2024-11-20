@@ -12,14 +12,11 @@ source /public/apps/conda3/etc/profile.d/conda.sh
 conda activate anc_vig
 
 
-filtered_CONSENSUS_DIR="/gs/gsfs0/shared-lab/greally-lab/David/simple_allele-stacker/filtered_consensus_regions/min_sample-1"
-OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/simple_allele-stacker/EDA_visualizations/outputs/region_seg_calls/min_sample-1"
+filtered_CONSENSUS_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/outputs/filtered_consensus_regions/min_sample-1"
+OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/EDA_visualizations/outputs/region_seg_calls/min_sample-1"
 
-REGIONS_DIR="/gs/gsfs0/shared-lab/greally-lab/David/simple_allele-stacker/segmentation_regions/regions_by_label"
+REGIONS_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/outputs/segmentation_regions/regions_by_label"
 
-
-# filtered_CONSENSUS_DIR="/gs/gsfs0/shared-lab/greally-lab/David/simple_allele-stacker/filtered_consensus_regions/min_sample-2"
-# OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/simple_allele-stacker/EDA_visualizations/outputs/region_seg_calls/min_sample-2"
 
 # Create output directory if it doesn't exist
 mkdir -p ${OUTPUT_DIR}

@@ -30,7 +30,7 @@ def plot_regions_per_chromosome(h1_file_path, h2_file_path, output_prefix):
     plt.figure(figsize=(15, 8))
     
     # Set font sizes
-    SMALL_SIZE = 15
+    SMALL_SIZE = 14
     MEDIUM_SIZE = 18
     LARGE_SIZE = 26
 
@@ -54,8 +54,9 @@ def plot_regions_per_chromosome(h1_file_path, h2_file_path, output_prefix):
     # Add average values as diagonal text above the bars
     for i, avg in enumerate(chr_averages):
         plt.text(x[i], max(chromosome_counts_h1[i], chromosome_counts_h2[i]) + 50,
-                f'{avg:.1f}', ha='center', va='bottom', fontsize=12,
-                rotation=30)  # Added rotation for diagonal text
+        f'{int(avg)}', ha='center', va='bottom', fontsize=12,  # Changed to integer format
+        rotation=45)  # Added rotation for diagonal text
+    
     
     # Customize the plot
     # plt.xlabel('Chromosome', fontsize=MEDIUM_SIZE, labelpad=10)
