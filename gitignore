@@ -1,0 +1,6 @@
+# Ignore the outputs directory
+outputs/
+
+# Ignore all error and output log files
+*.err
+*.out
