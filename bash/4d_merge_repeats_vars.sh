@@ -16,7 +16,7 @@ MERGED_VCF="${OUT_DIR}/merged_repeats_GRCh38.vcf.gz"
 INT_VCF="${OUT_DIR}/merged_repeats_GRCh38.filtered.vcf.gz"
 INT_VCF_2="${OUT_DIR}/merged_repeats_GRCh38.filtered.renamed.vcf.gz"
 FINAL_VCF="${OUT_DIR}/merged_repeats_GRCh38.qc.vcf.gz"
-FILEPATHS="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/merged_variants/file_paths/filepaths_repeats.txt"
+FILEPATHS="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/file_paths/filepaths_repeats.txt"
 STATS_FILE="${OUT_DIR}/variant_filtering_stats.txt"
 # Create output directory if it doesn't exist
 mkdir -p "$OUT_DIR"

@@ -26,7 +26,7 @@ else
 fi
 
 # Set paths
-VARIANT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/variant_prep"
+VARIANT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/merged_variants"
 PYTHON_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/python"
 OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/variant_mapping"
 
@@ -42,14 +42,15 @@ echo "Starting test variant mapping for ${HAP} at $(date)"
 echo "Using ${BED_FILE}"
 
 # Run quick test
-python3 "${PYTHON_DIR}/test_map.py" \
+python3 "${PYTHON_DIR}/test_map2.py" \
     --bed "$BED_FILE" \
     --haplotype "$HAP" \
     --output "${RUN_DIR}/test_${HAP}_variants.tsv" \
-    --small-vcf "${VARIANT_DIR}/small_variants/merged_phased_small_GRCh38.deepvariant.vcf.gz" \
-    --cnv-vcf "${VARIANT_DIR}/copy_number_variants/merged_phased_CNVs_GRCh38.vcf.gz" \
-    --sv-vcf "${VARIANT_DIR}/strutural_variants/merged_phased_SVs_GRCh38.deepvariant.vcf.gz" \
-    --tr-vcf "${VARIANT_DIR}/trgt_repeat_vcf/merged_phased_repeats_GRCh38.vcf.gz"
+    --small-vcf "${VARIANT_DIR}/small_variants/merged_phased_small_GRCh38.deepvariant.qc.vcf.gz" \
+    --cnv-vcf "${VARIANT_DIR}/copy_number_variants/merged_CNVs_GRCh38.qc.vcf.gz" \
+    --sv-vcf "${VARIANT_DIR}/strutural_variants/merged_phased_SVs_GRCh38.qc.vcf.gz" \
+    --sample-size 50
+    # --tr-vcf "${VARIANT_DIR}/trgt_repeat_vcf/merged_phased_repeats_GRCh38.vcf.gz"
 
 echo "Test complete for ${HAP} at $(date)"
 echo "Results in ${RUN_DIR}/test_${HAP}_variants.tsv"

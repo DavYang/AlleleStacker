@@ -10,7 +10,7 @@
 #SBATCH --error=SV_merge_%j.err
 
 # Set paths
-OUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/merged_variants/strutural_variants"
+OUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/merged_variants/structural_variants"
 FILEPATHS="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/file_paths/filepaths_SVs.txt"
 MERGED_VCF="${OUT_DIR}/merged_phased_SVs_GRCh38.vcf.gz"
 INT_VCF="${OUT_DIR}/merged_phased_SVs_GRCh38.filtered.vcf.gz"

@@ -1,16 +1,16 @@
 #!/bin/bash
 #SBATCH --job-name=parse
-#SBATCH --time=00:10:00
-#SBATCH --partition=quick
+#SBATCH --time=2-00:00:00
+#SBATCH --partition=normal
 #SBATCH --nodes=1
 #SBATCH --mem=16gb
 #SBATCH --output=log-parse.%A_%a.out
 
 # Directory containing the BED files
-bed_dir="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/outputs/segmentation_regions"
+bed_dir="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/segmentation_regions"
 
 # Base output directory for extracted regions
-output_base_dir="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/outputs/segmentation_regions/regions_by_label"
+output_base_dir="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/segmentation_regions/11-25-24/regions_by_label"
 
 # Create the base output directory if it doesn't exist
 mkdir -p "$output_base_dir"

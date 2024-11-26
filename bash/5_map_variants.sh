@@ -2,11 +2,11 @@
 #SBATCH --partition=normal
 #SBATCH --nodes=1
 #SBATCH --mem=64gb
-#SBATCH --time=24:00:00
+#SBATCH --time=2-00:00:00
 #SBATCH --job-name=var_map
 #SBATCH --output=var_map_%A_%a.out
 #SBATCH --error=var_map_%A_%a.err
-#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=david.yang2@einsteinmed.edu
 #SBATCH --cpus-per-task=20
 #SBATCH --array=1,2
@@ -28,7 +28,7 @@ else
 fi
 
 # Set paths
-VARIANT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/variant_prep"
+VARIANT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/merged_variants"
 PYTHON_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/python"
 OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/variant_mapping"
 
@@ -45,23 +45,6 @@ echo "Output directory: $RUN_DIR"
 echo "Using $(nproc) CPU cores"
 echo "Memory limit: 64GB"
 
-# Check input files
-echo "Validating input files..."
-for vcf in \
-    "${VARIANT_DIR}/small_variants/merged_phased_small_GRCh38.deepvariant.vcf.gz" \
-    "${VARIANT_DIR}/copy_number_variants/merged_phased_CNVs_GRCh38.vcf.gz" \
-    "${VARIANT_DIR}/strutural_variants/merged_phased_SVs_GRCh38.deepvariant.vcf.gz" \
-    "${VARIANT_DIR}/trgt_repeat_vcf/merged_phased_repeats_GRCh38.vcf.gz"
-do
-    if [[ ! -f "$vcf" ]]; then
-        echo "Error: VCF file not found: $vcf"
-        exit 1
-    fi
-    if [[ ! -f "${vcf}.tbi" ]]; then
-        echo "Error: VCF index not found: ${vcf}.tbi"
-        exit 1
-    fi
-done
 
 if [[ ! -f "$BED_FILE" ]]; then
     echo "Error: BED file not found: $BED_FILE"
@@ -70,15 +53,14 @@ fi
 
 # Run variant mapping
 echo "Running variant mapping for ${HAP}..."
-python3 "${PYTHON_DIR}/haplotype_variant_mapper.py" \
+python3 "${PYTHON_DIR}/test_map2.py" \
     --bed "$BED_FILE" \
     --haplotype "$HAP" \
-    --output "${RUN_DIR}/${HAP}_variants.tsv" \
-    --small-vcf "${VARIANT_DIR}/small_variants/merged_phased_small_GRCh38.deepvariant.vcf.gz" \
-    --cnv-vcf "${VARIANT_DIR}/copy_number_variants/merged_phased_CNVs_GRCh38.vcf.gz" \
-    --sv-vcf "${VARIANT_DIR}/strutural_variants/merged_phased_SVs_GRCh38.deepvariant.vcf.gz" \
-    --tr-vcf "${VARIANT_DIR}/trgt_repeat_vcf/merged_phased_repeats_GRCh38.vcf.gz" \
-    --threads ${SLURM_CPUS_PER_TASK}
+    --output-prefix "${RUN_DIR}/${HAP}" \
+    --small-vcf "${VARIANT_DIR}/small_variants/merged_phased_small_GRCh38.deepvariant.qc.vcf.gz" \
+    --cnv-vcf "${VARIANT_DIR}/copy_number_variants/merged_CNVs_GRCh38.qc.vcf.gz" \
+    --sv-vcf "${VARIANT_DIR}/structural_variants/merged_phased_SVs_GRCh38.qc.vcf.gz" \
+     --threads ${SLURM_CPUS_PER_TASK}
 
 # Check exit status
 if [[ $? -ne 0 ]]; then
@@ -95,13 +77,6 @@ echo "Generating summary report..."
     echo "=========================="
     echo "Run timestamp: ${TIMESTAMP}"
     echo "Haplotype: ${HAP}"
-    echo ""
-    echo "Input Files:"
-    echo "  BED file: $BED_FILE"
-    echo "  Small variants: ${VARIANT_DIR}/small_variants/merged_phased_small_GRCh38.deepvariant.vcf.gz"
-    echo "  CNVs: ${VARIANT_DIR}/copy_number_variants/merged_phased_CNVs_GRCh38.vcf.gz"
-    echo "  SVs: ${VARIANT_DIR}/strutural_variants/merged_phased_SVs_GRCh38.deepvariant.vcf.gz"
-    echo "  TRs: ${VARIANT_DIR}/trgt_repeat_vcf/merged_phased_repeats_GRCh38.vcf.gz"
     echo ""
     echo "Results:"
     echo "  Output file: ${RUN_DIR}/${HAP}_variants.tsv"

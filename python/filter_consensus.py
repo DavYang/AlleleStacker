@@ -11,7 +11,7 @@ import multiprocessing
 from tqdm import tqdm
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,  # Change to DEBUG level
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
@@ -172,6 +172,7 @@ def read_regions_parallel(file_pattern: str, sample_list: List[str], haplotype: 
     
     for sample in sample_list:
         sample_file = file_pattern.format(sample=sample, haplotype=haplotype)
+        logging.debug(f"Processing file: {sample_file}")
         if os.path.exists(sample_file):
             sample_files.append((sample_file, sample))
         else:
@@ -235,6 +236,10 @@ def process_regions(consensus_regions: Dict[str, List[Tuple[int, int]]],
                     if region_index.find_containing_region(chrom, start, end):
                         methylated_samples.add(sample_id)
                 
+                # Log the methylated samples for the specific region
+                if chrom == 'chr16' and start == 3363894 and end == 3363946:
+                    logging.debug(f"Region {region_key} methylated samples: {methylated_samples}")
+                
                 # Verify consistency with consensus
                 if not unmethylated_samples.issuperset(expected_unmethylated):
                     skipped_inconsistent += 1
@@ -253,6 +258,7 @@ def process_regions(consensus_regions: Dict[str, List[Tuple[int, int]]],
                 # 1. At least one sample is unmethylated (consensus requirement)
                 # 2. Enough samples show complete methylation
                 if len(unmethylated_samples) >= 1 and len(methylated_samples) >= min_samples:
+                    logging.debug(f"Region {region_key} has {len(methylated_samples)} methylated samples and {len(unmethylated_samples)} unmethylated samples")
                     results.append((
                         chrom,
                         start,

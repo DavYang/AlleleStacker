@@ -1,3 +1,9 @@
+### Date : 11/21/24
+
+Updates : 
+- Variant mapping runs for all VCF file types, not production ready (not sure if mapping is 100% accurate, variant IDs need to be formatted better)
+- Merged variants need to be QCed to remove low quality variants.
+
 ### Date : 11/20/24
 
 Goals:
@@ -20,8 +26,6 @@ Goals:
 
 2) Merge VCFs and apply soft QC
 3) Map to candidate regions
-
-
 
 
 
