@@ -1,3 +1,54 @@
+### Date: 11/26/24
+
+Re-working variant mapper using a small subset of the data to optimize the analysis and output structure: 
+
+
+##### Variant Mapper Results Documentation
+
+##### Column Headers Description
+
+#### Region Information
+| Column | Description |
+|--------|-------------|
+| chrom | Chromosome containing the methylation region |
+| start | Start coordinate of the methylation region |
+| end | End coordinate of the methylation region |
+
+#### Variant Information
+| Column | Description |
+|--------|-------------|
+| variant_chr | Chromosome containing the variant |
+| variant_start | Start position of the variant |
+| variant_end | End position of the variant (important for structural variants) |
+| variant_id | Unique identifier for the variant (from VCF or constructed as [type]_[chr]_[pos]) |
+| type | Type of variant: SNP, CNV (Copy Number Variant), or SV (Structural Variant) |
+
+#### Sample Fractions
+| Column | Description |
+|--------|-------------|
+| meth_fraction | Ratio of methylated samples containing variant (format: "n/N" where n = samples with variant, N = total methylated samples) |
+| unmeth_fraction | Ratio of unmethylated samples containing variant (format: "n/N" where n = samples with variant, N = total unmethylated samples) |
+
+#### Sample Details
+| Column | Description |
+|--------|-------------|
+| meth_samples | List of methylated samples containing the variant with their genotypes (format: "SAMPLE_ID:GENOTYPE", comma-separated) |
+| unmeth_samples | List of unmethylated samples containing the variant with their genotypes (format: "SAMPLE_ID:GENOTYPE", comma-separated) |
+
+#### Genotype Notation
+- For SNPs/SVs: "SAMPLE:A|B" where A and B are alleles (0=reference, 1=alternate)
+- For CNVs: "SAMPLE:CN=X" where X is the copy number
+- Multiple samples are separated by commas
+- "." indicates no samples in that category
+
+#### Example Entry
+```
+chr1  100000  120000  chr1  105678  105679  SNP_chr1_105678  SNP  2/8  5/12  SAMPLE1:1|0,SAMPLE4:1|0  SAMPLE8:1|0,SAMPLE9:1|0
+```
+This shows a SNP in a methylation region on chr1, present in 2 out of 8 methylated samples and 5 out of 12 unmethylated samples.
+
+
+
 ### Date : 11/21/24
 
 Updates : 

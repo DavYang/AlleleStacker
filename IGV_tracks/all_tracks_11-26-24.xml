@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Session genome="hg38" locus="chr8:72544891-72547628" version="8">
+    <Resources>
+        <Resource path="../outputs/merged_variants/small_variants/merged_phased_small_GRCh38.deepvariant.qc.vcf.gz" type="vcf"/>
+        <Resource path="../outputs/allele_stacks/filtered_consensus/filtered_consensus_H2_igv.bed" type="bed"/>
+        <Resource path="../outputs/allele_stacks/all_samples/igv_cohort_h2.bed.gz" type="bed"/>
+        <Resource path="../outputs/merged_variants/structural_variants/merged_phased_SVs_GRCh38.qc.vcf.gz" type="vcf"/>
+        <Resource path="../outputs/merged_variants/copy_number_variants/merged_CNVs_GRCh38.qc.vcf.gz" type="vcf"/>
+        <Resource path="../outputs/allele_stacks/all_samples/igv_cohort_h1.bed.gz" type="bed"/>
+        <Resource path="../outputs/allele_stacks/filtered_consensus/filtered_consensus_H1_igv.bed" type="bed"/>
+    </Resources>
+    <Panel height="92" name="Panel1732659306187" width="1903">
+        <Track attributeKey="merged_phased_small_GRCh38.deepvariant.qc.vcf.gz" clazz="org.broad.igv.variant.VariantTrack" displayMode="SQUISHED" featureVisibilityWindow="98400" fontSize="10" groupByStrand="false" id="/Volumes/users/Greally Lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/merged_variants/small_variants/merged_phased_small_GRCh38.deepvariant.qc.vcf.gz" name="Small variants" siteColorMode="ALLELE_FREQUENCY" visible="true"/>
+    </Panel>
+    <Panel height="84" name="Panel1732660008688" width="1903">
+        <Track attributeKey="merged_phased_SVs_GRCh38.qc.vcf.gz" clazz="org.broad.igv.variant.VariantTrack" displayMode="SQUISHED" featureVisibilityWindow="98400" fontSize="10" groupByStrand="false" id="/Volumes/users/Greally Lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/merged_variants/structural_variants/merged_phased_SVs_GRCh38.qc.vcf.gz" name="Structural Variants" siteColorMode="ALLELE_FREQUENCY" visible="true"/>
+    </Panel>
+    <Panel height="97" name="Panel1732660048065" width="1903">
+        <Track attributeKey="merged_CNVs_GRCh38.qc.vcf.gz" clazz="org.broad.igv.variant.VariantTrack" displayMode="SQUISHED" featureVisibilityWindow="98400" fontSize="10" groupByStrand="false" id="/Volumes/users/Greally Lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/merged_variants/copy_number_variants/merged_CNVs_GRCh38.qc.vcf.gz" name="Copy number variants" siteColorMode="ALLELE_FREQUENCY" visible="true"/>
+    </Panel>
+    <Panel height="591" name="FeaturePanel" width="1903">
+        <Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" fontSize="10" id="Reference sequence" name="Reference sequence" sequenceTranslationStrandValue="POSITIVE" shouldShowTranslation="false" visible="true"/>
+        <Track attributeKey="filtered_consensus_H1_igv.bed" clazz="org.broad.igv.track.FeatureTrack" displayMode="EXPANDED" fontSize="10" groupByStrand="false" id="/Volumes/users/Greally Lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/allele_stacks/filtered_consensus/filtered_consensus_H1_igv.bed" name="filtered_consensus_H1_igv.bed" visible="true"/>
+        <Track attributeKey="igv_cohort_h1.bed.gz" clazz="org.broad.igv.track.FeatureTrack" displayMode="SQUISHED" featureVisibilityWindow="1000000" fontSize="10" groupByStrand="false" id="/Volumes/users/Greally Lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/allele_stacks/all_samples/igv_cohort_h1.bed.gz" name="igv_cohort_h1.bed.gz" visible="true"/>
+        <Track attributeKey="filtered_consensus_H2_igv.bed" clazz="org.broad.igv.track.FeatureTrack" fontSize="10" groupByStrand="false" id="/Volumes/users/Greally Lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/allele_stacks/filtered_consensus/filtered_consensus_H2_igv.bed" name="filtered_consensus_H2_igv.bed" visible="true"/>
+        <Track attributeKey="igv_cohort_h2.bed.gz" clazz="org.broad.igv.track.FeatureTrack" displayMode="SQUISHED" featureVisibilityWindow="1000000" fontSize="10" groupByStrand="false" id="/Volumes/users/Greally Lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/allele_stacks/all_samples/igv_cohort_h2.bed.gz" name="igv_cohort_h2.bed.gz" visible="true"/>
+    </Panel>
+    <PanelLayout dividerFractions="0.006741573033707865,0.11573033707865168,0.2157303370786517,0.3303370786516854"/>
+    <HiddenAttributes>
+        <Attribute name="DATA FILE"/>
+        <Attribute name="DATA TYPE"/>
+        <Attribute name="NAME"/>
+    </HiddenAttributes>
+</Session>
