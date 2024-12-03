@@ -1,3 +1,10 @@
+### Date: 12/2/24
+
+Note:
+Due to how the current CpG tools does methylation pielups at heterozygous variants (CpG decay variants) the methylation at the variant is reported as a CpG site with 0% methylation probability. When MethBat Segment is used with haplotype segmentation enabled, this results in regions with CpG decay to be called as unmethylated, when in actuality, these alleles lack CpGs. 
+
+Additionally, I will re-segment using the previous parameters (min-cpg=5, max-gap=500) and re-work the bash script strucutre so that the variables for each script can be set within the python notebook
+
 ### Date: 11/26/24
 
 Re-working variant mapper using a small subset of the data to optimize the analysis and output structure: 

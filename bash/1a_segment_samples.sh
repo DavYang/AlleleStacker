@@ -6,20 +6,29 @@
 #SBATCH --mem=4gb
 #SBATCH --output=submit_jobs.%A_%a.out
 
-# Define the paths
-main_dir="/gs/gsfs0/users/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/cpg_pileup_beds"
-output_dir="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/segmentation_regions"
-log_out="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/segmentation_regions/log_files"
-scripts_dir="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/segmentation_regions/segmentation_scripts"
+# Accept parameters
+MAIN_DIR="$1"
+OUTPUT_DIR="$2"
+LOG_OUT="${OUTPUT_DIR}/log_files"
+SCRIPTS_DIR="${OUTPUT_DIR}/segmentation_scripts"
 
-mkdir -p "$output_dir"
-mkdir -p "$log_out"
-mkdir -p "$scripts_dir"
+# Validate required parameters
+if [ -z "$MAIN_DIR" ] || [ -z "$OUTPUT_DIR" ]; then
+    echo "Error: Both input and output directories must be specified"
+    echo "Usage: $0 <input_directory> <output_directory>"
+    exit 1
+fi
 
+# Create necessary directories
+mkdir -p "$OUTPUT_DIR"
+mkdir -p "$LOG_OUT"
+mkdir -p "$SCRIPTS_DIR"
+
+# Path to methbat (you might want to make this configurable too)
 methbat="/gs/gsfs0/shared-lab/greally-lab/David/software/methbat-v0.13.2-x86_64-unknown-linux-gnu/methbat"
 
 # Iterate through each sample directory
-for sample_dir in "$main_dir"/*; do
+for sample_dir in "$MAIN_DIR"/*; do
     if [ ! -d "$sample_dir" ]; then
         continue
     fi
@@ -31,7 +40,7 @@ for sample_dir in "$main_dir"/*; do
     job_name="segment-${sample_name}"
 
     # Create a Slurm script for each sample
-    slurm_script="$scripts_dir/${job_name}.sh"
+    slurm_script="$SCRIPTS_DIR/${job_name}.sh"
 
     cat > "$slurm_script" <<EOL
 #!/bin/bash
@@ -40,7 +49,7 @@ for sample_dir in "$main_dir"/*; do
 #SBATCH --partition=quick
 #SBATCH --nodes=1
 #SBATCH --mem=16gb
-#SBATCH --output=${log_out}/${job_name}.segment.%A_%a.out
+#SBATCH --output=${LOG_OUT}/${job_name}.segment.%A_%a.out
 
 source /public/apps/conda3/etc/profile.d/conda.sh
 conda activate DYenv
@@ -58,7 +67,7 @@ if [ \${#bed_files[@]} -eq 0 ]; then
 fi
 
 echo "Running segmentation for \${bed_files[@]}"
-"${methbat}" segment --input-prefix "${sample_name}.GRCh38" --output-prefix "${output_dir}/${sample_name}" --enable-haplotype-segmentation --condense-bed-labels --min-cpgs 2 --max-gap 200
+"${methbat}" segment --input-prefix "${sample_name}.GRCh38" --output-prefix "${OUTPUT_DIR}/${sample_name}" --enable-haplotype-segmentation --condense-bed-labels --min-cpgs 5 --max-gap 500
 
 if [ \$? -ne 0 ]; then
     echo "Error: command failed for \${bed_files[@]} with exit code \$?"

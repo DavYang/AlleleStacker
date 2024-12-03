@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Session genome="hg38" locus="chr1:167613632-167613738" version="8">
+    <Resources>
+        <Resource path="../../../6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/merged_haplotagged_bam/SPM161/SPM161.m84103_231128_221210_s1.hifi_reads.bc2037.GRCh38.aligned.haplotagged.bam" type="bam"/>
+        <Resource path="../../../6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/cpg_pileup_beds/SPM161/test.bed" type="bed"/>
+        <Resource path="../../AlleleStacker_11-20-24/outputs/segmentation_regions/SPM161.meth_regions.bed" type="bed"/>
+        <Resource path="../../AlleleStacker_11-20-24/outputs/allele_stacks/all_samples/sample_segmentation_haplotypes/H2_SPM161.meth_regions.bed" type="bed"/>
+        <Resource path="../../AlleleStacker_11-20-24/outputs/allele_stacks/all_samples/sample_segmentation_haplotypes/H1_SPM161.meth_regions.bed" type="bed"/>
+        <Resource path="../../../6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/cpg_pileup_beds/SPM161/test2.bed" type="bed"/>
+    </Resources>
+    <Panel height="629" name="Panel1732728256282" width="1423">
+        <Track attributeKey="SPM161.m84103_231128_221210_s1.hifi_reads.bc2037.GRCh38.aligned.haplotagged.bam Coverage" autoScale="true" clazz="org.broad.igv.sam.CoverageTrack" fontSize="15" id="/Volumes/users/Greally Lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/merged_haplotagged_bam/SPM161/SPM161.m84103_231128_221210_s1.hifi_reads.bc2037.GRCh38.aligned.haplotagged.bam_coverage" name="Coverage Sample 161" snpThreshold="0.2" visible="true">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="26.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="SPM161.m84103_231128_221210_s1.hifi_reads.bc2037.GRCh38.aligned.haplotagged.bam Junctions" autoScale="false" clazz="org.broad.igv.sam.SpliceJunctionTrack" fontSize="10" groupByStrand="false" height="60" id="/Volumes/users/Greally Lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/merged_haplotagged_bam/SPM161/SPM161.m84103_231128_221210_s1.hifi_reads.bc2037.GRCh38.aligned.haplotagged.bam_junctions" maxdepth="50" name="SPM161.m84103_231128_221210_s1.hifi_reads.bc2037.GRCh38.aligned.haplotagged.bam Junctions" visible="false"/>
+        <Track attributeKey="H1_SPM161.meth_regions.bed" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;3480.0;255,255,255;0,0,178" featureVisibilityWindow="1455041" fontSize="15" groupByStrand="false" id="/Volumes/users/Greally Lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/allele_stacks/all_samples/sample_segmentation_haplotypes/H1_SPM161.meth_regions.bed" name="H1 Segmentation" visible="true"/>
+        <Track attributeKey="test.bed" clazz="org.broad.igv.track.FeatureTrack" fontSize="15" groupByStrand="false" id="/Volumes/users/Greally Lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/cpg_pileup_beds/SPM161/test.bed" name="H1 CpG pileups" visible="true"/>
+        <Track attributeKey="H2_SPM161.meth_regions.bed" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;3522.0;255,255,255;0,0,178" featureVisibilityWindow="1803822" fontSize="15" groupByStrand="false" id="/Volumes/users/Greally Lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/allele_stacks/all_samples/sample_segmentation_haplotypes/H2_SPM161.meth_regions.bed" name="H2 Segmentation" visible="true"/>
+        <Track attributeKey="test2.bed" clazz="org.broad.igv.track.FeatureTrack" fontSize="15" groupByStrand="false" id="/Volumes/users/Greally Lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/cpg_pileup_beds/SPM161/test2.bed" name="H2 CpG pileups" visible="true"/>
+        <Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" fontSize="15" id="Reference sequence" name="Reference sequence" sequenceTranslationStrandValue="POSITIVE" shouldShowTranslation="false" visible="true"/>
+        <Track attributeKey="SPM161.m84103_231128_221210_s1.hifi_reads.bc2037.GRCh38.aligned.haplotagged.bam" clazz="org.broad.igv.sam.AlignmentTrack" color="185,185,185" displayMode="EXPANDED" experimentType="THIRD_GEN" fontSize="15" id="/Volumes/users/Greally Lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/merged_haplotagged_bam/SPM161/SPM161.m84103_231128_221210_s1.hifi_reads.bc2037.GRCh38.aligned.haplotagged.bam" name="Sample 161 Reads" visible="true">
+            <RenderOptions colorOption="BASE_MODIFICATION_5MC"/>
+        </Track>
+    </Panel>
+    <Panel height="220" name="FeaturePanel" width="1423">
+        <Track attributeKey="SPM161.meth_regions.bed" clazz="org.broad.igv.track.FeatureTrack" displayMode="EXPANDED" fontSize="15" groupByStrand="false" id="/Volumes/users/Greally Lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/segmentation_regions/SPM161.meth_regions.bed" name="SPM161.meth_regions.bed" visible="true"/>
+        <Track attributeKey="Refseq Genes" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;836.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/ncbiRefSeq.txt.gz" name="Refseq Genes" visible="true"/>
+    </Panel>
+    <PanelLayout dividerFractions="0.008450704225352112,0.8943661971830986"/>
+    <HiddenAttributes>
+        <Attribute name="DATA FILE"/>
+        <Attribute name="DATA TYPE"/>
+        <Attribute name="NAME"/>
+    </HiddenAttributes>
+</Session>

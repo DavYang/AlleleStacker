@@ -1,6 +1,12 @@
-# Ignore the outputs directory
-outputs/
+   # Ignore all .log files
+   *.log
+   *.err
+   *.out
 
-# Ignore all error and output log files
-*.err
-*.out
+   # Ignore the outputs directory
+   outputs/
+
+   # Ignore all .DS_Store files (macOS)
+   .DS_Store
+
+  

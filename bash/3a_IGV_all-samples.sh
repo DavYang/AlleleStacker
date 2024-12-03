@@ -26,10 +26,10 @@ source /public/apps/conda3/etc/profile.d/conda.sh
 conda activate anc_vig
 
 # Define paths
-INPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/segmentation_regions"
-OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/allele_stacks/all_samples"
-SCRIPT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/python"
-SAMPLE_LIST="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/sample_lists/all_samples.txt"
+INPUT_DIR="$1"
+OUTPUT_DIR="$2"
+SCRIPT_DIR="./python"
+SAMPLE_LIST="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/sample_lists/all_samples.txt"
 
 mkdir -p $OUTPUT_DIR
 

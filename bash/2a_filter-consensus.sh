@@ -26,46 +26,20 @@ conda activate anc_vig
 
 # Set script parameters
 
-REGIONS_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/segmentation_regions/regions_by_label"
-PYTHON="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/python"
-INPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/consensus_regions/min_sample-1"
+REGIONS_DIR="$1"
+INPUT_DIR="$2"
+OUTPUT_DIR="$3"
+# Get haplotype from command line argument
+HAPLOTYPE="$4"
 
-OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/filtered_consensus_regions/min_sample-1"
 SAMPLE_LIST="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/sample_lists/all_samples.txt"
+PYTHON="./python"
 
-
-# Test 
-
-# # 3 sample
-# INPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/consensus_regions/min_sample-1/test_3"
-# SAMPLE_LIST_FILE="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/sample_lists/3_samples.txt"
-# OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/filtered_consensus_regions/min_sample-1/test_3"
-
-# # 6 sample
-# INPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/consensus_regions/min_sample-1/test_6"
-# SAMPLE_LIST_FILE="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/sample_lists/6_samples.txt"
-# OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/filtered_consensus_regions/min_sample-1/test_6"
-
-# # 9 sample
-# INPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/consensus_regions/min_sample-1/test_9"
-# SAMPLE_LIST_FILE="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/sample_lists/9_samples.txt"
-# OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/filtered_consensus_regions/min_sample-1/test_9"
-
-# # 12 sample
-# INPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/consensus_regions/min_sample-1/test_12"
-# SAMPLE_LIST_FILE="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/sample_lists/12_samples.txt"
-# OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/filtered_consensus_regions/min_sample-1/test_12"
-
-# # 15 sample
-# INPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/consensus_regions/min_sample-1/test_15"
-# SAMPLE_LIST_FILE="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/sample_lists/15_samples.txt"
-# OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/filtered_consensus_regions/min_sample-1/test_15"
 
 
 mkdir -p $OUTPUT_DIR
 
-# Get haplotype from command line argument
-HAPLOTYPE=$1
+
 
 if [ -z "$HAPLOTYPE" ]; then
     echo "Error: Haplotype not specified"

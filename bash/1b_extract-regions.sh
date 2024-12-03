@@ -6,11 +6,8 @@
 #SBATCH --mem=16gb
 #SBATCH --output=log-parse.%A_%a.out
 
-# Directory containing the BED files
-bed_dir="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/segmentation_regions"
-
-# Base output directory for extracted regions
-output_base_dir="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/segmentation_regions/11-25-24/regions_by_label"
+bed_dir="$1"
+output_base_dir="$2"
 
 # Create the base output directory if it doesn't exist
 mkdir -p "$output_base_dir"

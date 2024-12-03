@@ -15,9 +15,9 @@ source /public/apps/conda3/etc/profile.d/conda.sh
 conda activate anc_vig
 
 # Define directories
-INPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/filtered_consensus_regions/min_sample-1"
-OUTPUT_DIR=gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs//allele_stacks/filtered_consensus"
-SCRIPT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/python"
+INPUT_DIR="$1"
+OUTPUT_DIR="$2"
+SCRIPT_DIR="./python"
 
 # Create output directory if it doesn't exist
 mkdir -p "$OUTPUT_DIR"
