@@ -1,0 +1,14 @@
+# config.yaml
+
+# Reference genome path
+reference_fasta: "/gs/gsfs0/users/greally-lab/David/reference_genomes/hg38/GRCh38_full_analysis_set_plus_decoy_hla.fa"
+
+# Base directories
+output_base_dir: /gs/gsfs0/shared-lab/greally-lab/David/LRS_data_analysis_tutorials/CpG_pileup_QC/outputs/full_QC"
+vcf_base_dir: "/gs/gsfs0/users/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs"
+bed_base_dir: "/gs/gsfs0/users/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/cpg_pileup_beds"
+
+
+# Pipeline settings
+conda:
+  analysis_env: "anc_vig"
