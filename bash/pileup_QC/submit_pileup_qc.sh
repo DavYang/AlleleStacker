@@ -56,26 +56,26 @@ while read SAMPLE; do
         --job-name="${SAMPLE}" \
         --partition=normal \
         --time=2-00:00:00 \
-        --mem=16G \
-        --cpus-per-task=20 \
+        --mem=32G \
+        --cpus-per-task=40 \
         --output="${BASE_OUTPUT_DIR}/logs/${SAMPLE}_%j.out" \
         --error="${BASE_OUTPUT_DIR}/logs/${SAMPLE}_%j.err" \
         --wrap="
             set -e
-            source /public/apps/conda3/etc/profile.d/conda.sh
 
             # Create sample-specific directories
             SAMPLE_DIR=${BASE_OUTPUT_DIR}/${SAMPLE}
 
             # Run QC
+            source /public/apps/conda3/etc/profile.d/conda.sh
             conda activate ${conda_analysis_env}
-            python python/pileup_QC.py \
+            python ${python}/pileup_QC.py \
                 --vcf ${vcf_base_dir}/${SAMPLE}/${SAMPLE}.*.vcf.gz \
                 --ref ${reference_fasta} \
                 --prefix ${SAMPLE} \
                 --bed-dir ${bed_base_dir}/${SAMPLE} \
                 --outdir ${SAMPLE_DIR} \
-                --threads 20
+                --threads 40
             "
     
     echo "Submitted job for ${SAMPLE} (output in ${SAMPLE_DIR})"

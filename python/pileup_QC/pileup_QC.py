@@ -183,7 +183,7 @@ class CpGVariantFilter:
             variants.append(convert_variant(var))
         vcf.close()
         
-        chunk_size = max(1000, len(variants) // (mp.cpu_count() * 2))
+        chunk_size = max(100000, len(variants) // (mp.cpu_count() * 2))
         variant_chunks = [variants[i:i + chunk_size] for i in range(0, len(variants), chunk_size)]
         chunk_data = [(str(self.ref_fasta), chunk) for chunk in variant_chunks]
         
@@ -266,8 +266,8 @@ class CpGVariantFilter:
         self.results[bed_type] = stats
         
         # Save filtered files
-        kept_file = self.passing_dir / f"{self.prefix}.{bed_type}.filtered.bed"
-        excl_file = self.excluded_dir / f"{self.prefix}.{bed_type}.excluded.bed"
+        kept_file = self.passing_dir / f"{self.prefix}.filtered.{bed_type}.bed"
+        excl_file = self.excluded_dir / f"{self.prefix}.excluded.{bed_type}.bed"
         
         kept.to_csv(kept_file, sep='\t', index=False, header=False)
         if not excluded.empty:

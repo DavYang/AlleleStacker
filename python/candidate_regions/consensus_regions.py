@@ -38,7 +38,7 @@ class Region:
         self.sample_id = {sample_id} if isinstance(sample_id, str) else set(sample_id)
         self.summary_label = {summary_label} if summary_label else set()
         self.size = size or end - start
-        self.contributing_samples = self.sample_id.copy()  # Track all contributing samples
+        self.contributing_samples = self.sample_id.copy()
 
     def __lt__(self, other):
         if self.chrom != other.chrom:
@@ -80,16 +80,12 @@ def region_generator(file_path: str, sample_id: str) -> Iterator[Region]:
         return []
 
 def merge_regions(regions: List[Region], max_gap: int = 5000, min_samples: int = 2) -> List[Region]:
-    """
-    Merge regions with improved sample tracking to ensure proper consensus generation.
-    Each sample can only contribute one region to each consensus.
-    """
+    """Merge regions with improved sample tracking"""
     if not regions:
         return []
     
     log_time(f"Starting region merging for {len(regions)} regions")
     
-    # Group regions by chromosome
     chrom_regions = defaultdict(list)
     for region in regions:
         chrom_regions[region.chrom].append(region)
@@ -99,17 +95,14 @@ def merge_regions(regions: List[Region], max_gap: int = 5000, min_samples: int =
     for chrom, chr_regions in chrom_regions.items():
         log_time(f"Processing chromosome {chrom}")
         
-        # Sort regions by start position
+        # Sort regions by position
         chr_regions.sort(key=lambda r: (r.start, r.end))
-        
-        # Track samples by coordinate ranges instead of region IDs
-        sample_contributions = defaultdict(list)  # sample -> [(start, end), ...]
+        sample_contributions = defaultdict(list)
         
         i = 0
         while i < len(chr_regions):
             current_region = chr_regions[i]
             
-            # Check if any sample in this region already contributed nearby
             samples_available = True
             for sample in current_region.sample_id:
                 for prev_start, prev_end in sample_contributions[sample]:
@@ -124,30 +117,25 @@ def merge_regions(regions: List[Region], max_gap: int = 5000, min_samples: int =
                 i += 1
                 continue
             
-            # Find maximum extent of overlapping regions
             current_start = current_region.start
             current_end = current_region.end
             overlapping_regions = [current_region]
             contributing_samples = {sample: [current_region] 
                                  for sample in current_region.sample_id}
             
-            # Gather all regions that overlap with current extent
             j = i + 1
             while j < len(chr_regions):
                 next_region = chr_regions[j]
                 
-                # Check if next region is too far
                 if next_region.start > current_end + max_gap:
                     break
                 
-                # Verify no sample in next_region already contributed
                 sample_ok = True
                 for sample in next_region.sample_id:
                     if sample in contributing_samples:
                         sample_ok = False
                         break
                         
-                    # Also check against previous consensus regions
                     for prev_start, prev_end in sample_contributions[sample]:
                         if (next_region.start <= prev_end + max_gap and 
                             next_region.end >= prev_start - max_gap):
@@ -165,12 +153,10 @@ def merge_regions(regions: List[Region], max_gap: int = 5000, min_samples: int =
                 
                 j += 1
             
-            # Create consensus only if enough unique samples
             if len(contributing_samples) >= min_samples:
                 consensus_start = min(r.start for r in overlapping_regions)
                 consensus_end = max(r.end for r in overlapping_regions)
                 
-                # Create consensus region with full sample tracking
                 consensus_region = Region(
                     chrom,
                     consensus_start,
@@ -182,7 +168,6 @@ def merge_regions(regions: List[Region], max_gap: int = 5000, min_samples: int =
                 consensus_region.contributing_samples = set().union(*(r.sample_id for r in overlapping_regions))
                 merged_regions.append(consensus_region)
                 
-                # Record sample contributions
                 for sample, regions in contributing_samples.items():
                     for region in regions:
                         sample_contributions[sample].append((region.start, region.end))
@@ -195,7 +180,7 @@ def merge_regions(regions: List[Region], max_gap: int = 5000, min_samples: int =
     return merged_regions
 
 def write_consensus_regions(consensus_regions: List[Region], output_file: str) -> None:
-    """Write consensus regions to output file with improved sample tracking"""
+    """Write consensus regions to output file"""
     log_time(f"Writing {len(consensus_regions)} consensus regions to {output_file}")
     
     with open(output_file, 'w', buffering=8192) as f:
@@ -223,12 +208,13 @@ def write_consensus_regions(consensus_regions: List[Region], output_file: str) -
     log_time(f"Completed writing consensus regions")
 
 def process_sample(sample: str, input_dir: str, haplotype: str) -> Tuple[str, List[Region]]:
-    """Process a single sample"""
-    log_time(f"Processing sample {sample} for haplotype {haplotype}")
+    """Process a single sample for a given haplotype"""
+    log_time(f"Processing sample {sample} for {haplotype} regions")
     
-    sample_file = os.path.join(input_dir, f"{sample}_{haplotype}_U.bed")
+    # Look in the U directory for unmethylated regions
+    sample_file = os.path.join(input_dir, 'U', f"{sample}.{haplotype}_U.bed")
     if not os.path.exists(sample_file):
-        log_time(f"Warning: File not found for sample {sample}")
+        log_time(f"Warning: File not found {sample_file}")
         return sample, []
     
     regions = list(region_generator(sample_file, sample))
@@ -237,13 +223,12 @@ def process_sample(sample: str, input_dir: str, haplotype: str) -> Tuple[str, Li
 
 def process_haplotype(input_dir: str, output_file: str, max_gap: int, 
                      min_samples: int, sample_list: List[str], haplotype: str) -> Dict:
-    """Process regions for a specific haplotype with parallel processing"""
+    """Process regions for a specific haplotype"""
     log_time(f"Starting haplotype {haplotype} processing")
     
     sample_stats = {}
     all_regions = []
     
-    # Process samples in parallel
     max_workers = min(32, len(sample_list))
     log_time(f"Processing {len(sample_list)} samples using {max_workers} workers")
     
@@ -268,13 +253,10 @@ def process_haplotype(input_dir: str, output_file: str, max_gap: int,
     log_time(f"Processing {len(all_regions)} total regions")
     consensus_regions = merge_regions(all_regions, max_gap=max_gap, min_samples=min_samples)
     
-    # Validate consensus regions
     valid_consensus = []
     for region in consensus_regions:
         if len(region.contributing_samples) >= min_samples:
             valid_consensus.append(region)
-        else:
-            log_time(f"Warning: Removing consensus region with insufficient samples: {region}")
     
     write_consensus_regions(valid_consensus, output_file)
     
@@ -291,8 +273,8 @@ def process_haplotype(input_dir: str, output_file: str, max_gap: int,
 def main():
     log_time("Starting consensus region generation")
     
-    parser = argparse.ArgumentParser(description="Generate consensus unmethylated regions for H1 and H2 haplotypes.")
-    parser.add_argument("--input_dir", required=True, help="Input directory containing H1_U and H2_U subdirectories")
+    parser = argparse.ArgumentParser(description="Generate consensus unmethylated regions for haplotypes.")
+    parser.add_argument("--input_dir", required=True, help="Input directory containing M and U subdirectories")
     parser.add_argument("--output_prefix", required=True, help="Prefix for output BED files")
     parser.add_argument("--output_dir", required=True, help="Output directory for consensus BED files")
     parser.add_argument("--sample-list-file", required=True, help="File containing sample IDs")
@@ -300,31 +282,28 @@ def main():
     parser.add_argument("--min-samples", type=int, default=2, help="Minimum samples required")
     args = parser.parse_args()
 
-    log_time("Creating output directory")
     os.makedirs(args.output_dir, exist_ok=True)
 
-    log_time("Reading sample list")
     with open(args.sample_list_file) as f:
         sample_list = [line.strip() for line in f if line.strip()]
     log_time(f"Found {len(sample_list)} samples")
 
     stats = {}
-    for hap in ['H1', 'H2']:
+    for hap in ['hap1', 'hap2']:
         log_time(f"\nProcessing {hap} haplotype...")
-        input_dir = os.path.join(args.input_dir, f"{hap}_U")
         output_file = os.path.join(args.output_dir, f"{args.output_prefix}_{hap}_consensus.bed")
-        stats[hap] = process_haplotype(input_dir, output_file, args.max_gap, 
+        stats[hap] = process_haplotype(args.input_dir, output_file, args.max_gap, 
                                      args.min_samples, sample_list, hap)
 
+    # Write statistics
     log_time("Writing statistics file")
     stats_file = os.path.join(args.output_dir, f"{args.output_prefix}_statistics.tsv")
     with open(stats_file, 'w', buffering=8192) as f:
         writer = csv.writer(f, delimiter='\t')
         writer.writerow([
-            "Sample", "Haplotype", "Count", 
-            "Mean_Size", "Size_StdDev"
+            "Sample", "Haplotype", "Count", "Mean_Size", "Size_StdDev"
         ])
-        for hap in ['H1', 'H2']:
+        for hap in ['hap1', 'hap2']:
             for sample, stats_dict in sorted(stats[hap].items()):
                 writer.writerow([
                     sample,
@@ -334,9 +313,9 @@ def main():
                     f"{stats_dict['size_std']:.2f}"
                 ])
 
-    # Calculate and print summary statistics
+    # Print summary statistics
     log_time("\nSummary Statistics:")
-    for hap in ['H1', 'H2']:
+    for hap in ['hap1', 'hap2']:
         sample_sizes = np.array([
             stats[hap][sample]['mean_size'] 
             for sample in stats[hap] 

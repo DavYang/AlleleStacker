@@ -18,10 +18,8 @@ OUTPUT_PREFIX="consensus_regions"
 
 MIN_SAMPLES=1
 MAX_GAP=500
-PYTHON="./python"
-SAMPLE_LIST_FILE="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/sample_lists/all_samples.txt"
-
-
+PYTHON="./python/candidate_regions"
+SAMPLE_LIST_FILE="./bash/pileup_QC/sample_list.txt"
 
 # Create output directory if it doesn't exist
 mkdir -p $OUTPUT_DIR

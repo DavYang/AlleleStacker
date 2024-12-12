@@ -1,3 +1,6 @@
+### Date: 12/12/24
+Added CpG pileup QC and reworked scripts up until consensus region filtering.
+
 ### Date: 12/2/24
 
 Note:
