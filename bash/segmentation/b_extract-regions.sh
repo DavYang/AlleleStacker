@@ -11,35 +11,37 @@ output_dir="$2"
 regions_dir="${output_dir}/regions"
 temp_dir=$(mktemp -d)
 
-# Create directory structure
-mkdir -p "${output_dir}/"{regions,summaries}
+# Create directory structure for combined haplotype-methylation states
+mkdir -p "${output_dir}/"{regions/{H1_M,H1_U,H2_M,H2_U},summaries}
 
 # Process a single bed file
 process_bed() {
     local bed_file="$1"
     local sample_name="$2"
+    local hap="$3"  # hap1 or hap2
     
     [ ! -f "$bed_file" ] && return
     
-    # Process each unique label
-    awk -v sample="$sample_name" -v outdir="$regions_dir" -v temp="$temp_dir" '
+    # Convert hap1/hap2 to H1/H2
+    local hap_prefix="${hap/hap/H}"
+    
+    # Process and relabel regions
+    awk -v sample="$sample_name" -v hap="$hap_prefix" -v outdir="$regions_dir" -v temp="$temp_dir" '
     NR > 1 && $4 != "summary_label" {
-        label = $4
+        # Create combined label (H1_M or H1_U or H2_M or H2_U)
+        combined_label = hap "_" $4
         size = $3 - $2
         
-        # Create directory if needed
-        if (!dirs[label]++) {
-            system("mkdir -p " outdir "/" label)
+        # Write to appropriate file with modified summary_label
+        if (!written[combined_label]++) {
+            print "chrom\tstart\tend\tsummary_label\tsize" > outdir "/" combined_label "/" sample "_" combined_label ".bed"
         }
         
-        # Write to label file
-        if (!written[label]++) {
-            print "chrom\tstart\tend\tsummary_label\tsize" > outdir "/" label "/" sample "_" label ".bed"
-        }
-        print $1, $2, $3, $4, size >> outdir "/" label "/" sample "_" label ".bed"
+        # Write data with modified summary_label
+        print $1, $2, $3, combined_label, size >> outdir "/" combined_label "/" sample "_" combined_label ".bed"
         
         # Count regions
-        counts[label]++
+        counts[combined_label]++
     }
     END {
         for (label in counts) {
@@ -57,30 +59,25 @@ for spm_dir in SPM*; do
     # Process both haplotypes
     for hap in hap1 hap2; do
         bed_file="$spm_dir/${spm_dir}.${hap}.meth_regions.bed"
-        process_bed "$bed_file" "${spm_dir}.${hap}"
+        process_bed "$bed_file" "${spm_dir}" "$hap"
     done
 done
 
-# Generate summary
+# Generate summary with combined haplotype-methylation states
 {
     # Header
-    echo -n "Label"
-    for spm_dir in SPM*/; do
-        [ -d "$spm_dir" ] && echo -n -e "\t${spm_dir%/}.hap1\t${spm_dir%/}.hap2"
-    done
-    echo
+    echo -e "Sample\tH1_M\tH1_U\tH2_M\tH2_U"
     
-    # Get all unique labels and sort them
-    find . -name "*.meth_regions.bed" -exec awk 'NR > 1 && $4 != "summary_label" {print $4}' {} \; | 
-    sort -u | while read label; do
-        echo -n "$label"
-        for spm_dir in SPM*/; do
-            [ ! -d "$spm_dir" ] && continue
-            spm=${spm_dir%/}
-            for hap in hap1 hap2; do
-                count=$(grep -P "^$label\t" "$temp_dir/${spm}.${hap}_counts.txt" 2>/dev/null | cut -f2)
-                echo -n -e "\t${count:-0}"
-            done
+    # Process each sample
+    for spm_dir in SPM*/; do
+        [ ! -d "$spm_dir" ] && continue
+        spm=${spm_dir%/}
+        echo -n "$spm"
+        
+        # Get counts for each combined state
+        for state in H1_M H1_U H2_M H2_U; do
+            count=$(grep -P "^${state}\t" "$temp_dir/${spm}_counts.txt" 2>/dev/null | cut -f2)
+            echo -n -e "\t${count:-0}"
         done
         echo
     done

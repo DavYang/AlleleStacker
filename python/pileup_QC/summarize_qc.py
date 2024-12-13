@@ -53,16 +53,26 @@ class MultiSampleAnalyzer:
         plt.rcParams['grid.alpha'] = 0.3
         plt.rcParams['grid.linestyle'] = '--'
         
+        # Calculate adjusted destroyed sites
+        df['hap1_AdjDestroyed'] = df['hap1_Destroyed'] - df['hap1_Preserved']
+        df['hap2_AdjDestroyed'] = df['hap2_Destroyed'] - df['hap2_Preserved']
+        
         metrics = {
-            'Kept': ('hap1_Kept', 'hap2_Kept', 'Kept Sites by Haplotype'),
-            'Excl': ('hap1_Excl', 'hap2_Excl', 'Excluded Sites by Haplotype'),
-            'Destroyed': ('hap1_Destroyed', 'hap2_Destroyed', 'Destroyed Sites by Haplotype'),
-            'Phantom': ('hap1_Phantom', 'hap2_Phantom', 'Phantom Sites by Haplotype')
+            'Kept': ('hap1_Kept', 'hap2_Kept', 'CpG Sites Retained'),
+            'Excl': ('hap1_Excl', 'hap2_Excl', 'CpG Sites Removed'),
+            'Destroyed': ('hap1_Destroyed', 'hap2_Destroyed', 'CpG Sites Destroyed'),
+            'Phantom': ('hap1_Phantom', 'hap2_Phantom', 'Phantom CpG Sites'),
+            'Preserved': ('hap1_Preserved', 'hap2_Preserved', 'Preserved CpG Sites'),
+            'AdjDestroyed': ('hap1_AdjDestroyed', 'hap2_AdjDestroyed', 'Adjusted CpG Sites Destroyed (Destroyed - Preserved)')
         }
         
         x = np.arange(len(df))
         
         for metric, (hap1_col, hap2_col, title) in metrics.items():
+            if hap1_col not in df.columns or hap2_col not in df.columns:
+                logging.warning(f"Skipping {title} plot - columns not found in data")
+                continue
+                
             # Create figure and axis objects
             fig, ax = plt.subplots(figsize=(width, height))
             
@@ -71,6 +81,18 @@ class MultiSampleAnalyzer:
                   color=colors['hap1'], edgecolor='black', linewidth=0.5)
             ax.bar(x + bar_width/2, df[hap2_col], bar_width, label='Haplotype 2', 
                   color=colors['hap2'], edgecolor='black', linewidth=0.5)
+            
+            # Calculate overall average and standard deviation
+            values = np.concatenate([df[hap1_col], df[hap2_col]])
+            overall_avg = np.mean(values)
+            overall_std = np.std(values)
+            
+            # Add average line and annotation with standard deviation
+            ax.axhline(y=overall_avg, color='red', linestyle='--', alpha=0.8, linewidth=1.5)
+            ax.text(len(df)-1 + 0.5, overall_avg, 
+                   f'Group Mean: {overall_avg:.1e} ± {overall_std:.1e}', 
+                   color='red', va='center', ha='left',
+                   bbox=dict(facecolor='white', edgecolor='none', alpha=0.7))
             
             # Set labels and title
             ax.set_xlabel('Sample ID', fontsize=10)
@@ -81,25 +103,29 @@ class MultiSampleAnalyzer:
             ax.set_xticks(x)
             ax.set_xticklabels(df['Sample'], rotation=45, ha='right', fontsize=8)
             
-            # Format y-axis
-            ax.yaxis.set_major_formatter(plt.ScalarFormatter(useMathText=True))
-            ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+            # Format y-axis with scientific notation
+            ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{x:.1e}'))
+            plt.yticks(fontsize=8)
             
             # Add grid
             ax.grid(True, alpha=0.3, linestyle='--')
             
-            # Add legend in top left
+            # Add legend below x-axis label
             ax.legend(
                 frameon=True,
                 fancybox=True,
                 shadow=True,
-                bbox_to_anchor=(0.001, 0.999),
-                loc='upper left',
-                borderaxespad=0.
+                bbox_to_anchor=(0.5, -0.35),
+                loc='upper center',
+                borderaxespad=0.,
+                ncol=2
             )
             
-            # Adjust layout and save
+            # Adjust layout
             plt.tight_layout()
+            plt.subplots_adjust(bottom=0.25, right=0.85)
+            
+            # Save figure
             plt.savefig(
                 self.output_dir / f'{metric.lower()}_sites_comparison.pdf',
                 dpi=300,
@@ -110,9 +136,14 @@ class MultiSampleAnalyzer:
 
     def calculate_statistics(self, df: pd.DataFrame) -> pd.DataFrame:
         """Calculate summary statistics for each metric"""
+        # Calculate adjusted destroyed sites
+        df['hap1_AdjDestroyed'] = df['hap1_Destroyed'] - df['hap1_Preserved']
+        df['hap2_AdjDestroyed'] = df['hap2_Destroyed'] - df['hap2_Preserved']
+        
         stats_data = []
+        metrics = ['Total', 'Kept', 'Excl', 'Destroyed', 'Phantom', 'Preserved', 'AdjDestroyed']
+        
         for hap in ['hap1', 'hap2']:
-            metrics = ['Total', 'Kept', 'Excl', 'Destroyed', 'Phantom']
             for metric in metrics:
                 col = f'{hap}_{metric}'
                 if col in df.columns:
@@ -137,7 +168,7 @@ class MultiSampleAnalyzer:
         with open(report_path, 'w') as f:
             f.write("CpG Analysis Summary Report\n")
             f.write("==========================\n\n")
-                        
+            
             # Write statistics for each haplotype
             for hap in ['hap1', 'hap2']:
                 f.write(f"\n{hap.upper()} Summary Statistics:\n")
@@ -157,10 +188,14 @@ class MultiSampleAnalyzer:
                 kept = df[f'{hap}_Kept'].mean()
                 total = df[f'{hap}_Total'].mean()
                 excl = df[f'{hap}_Excl'].mean()
+                destroyed = df[f'{hap}_Destroyed'].mean()
+                preserved = df[f'{hap}_Preserved'].mean()
+                adj_destroyed = df[f'{hap}_AdjDestroyed'].mean()
                 
                 f.write(f"\n{hap.upper()}:\n")
                 f.write(f"  Kept/Total: {(kept/total)*100:.2f}%\n")
                 f.write(f"  Excluded/Total: {(excl/total)*100:.2f}%\n")
+                f.write(f"  Adjusted Destroyed/Total: {(adj_destroyed/total)*100:.2f}%\n")
 
     def run_analysis(self) -> None:
         """Run complete analysis pipeline"""

@@ -1,0 +1,17 @@
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM161/SPM161.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM180/SPM180.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM187/SPM187.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM198/SPM198.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM202/SPM202.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM206/SPM206.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM212/SPM212.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM231/SPM231.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM248/SPM248.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM276-1/SPM276-1.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM282/SPM282.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM296/SPM296.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM300/SPM300.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM303/SPM303.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM314/SPM314.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM320/SPM320.GRCh38.deepvariant.phased.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs/SPM321/SPM321.GRCh38.deepvariant.phased.vcf.gz

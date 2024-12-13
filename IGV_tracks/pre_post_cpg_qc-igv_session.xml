@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Session genome="hg38" locus="chr20:50269281-50347049" nextAutoscaleGroup="2" version="8">
+    <Resources>
+        <Resource path="../outputs/igv_beds/allele_stacks/igv_cohort_h1.bed.gz" type="bed"/>
+        <Resource path="../old_QC_AS/outputs/allele_stacks/all_samples/igv_cohort_h2.bed.gz" type="bed"/>
+        <Resource path="../outputs/igv_beds/allele_stacks/igv_cohort_h2.bed.gz" type="bed"/>
+        <Resource path="../old_QC_AS/outputs/allele_stacks/all_samples/igv_cohort_h1.bed.gz" type="bed"/>
+    </Resources>
+    <Panel height="876" name="FeaturePanel" width="1903">
+        <Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" fontSize="10" id="Reference sequence" name="Reference sequence" sequenceTranslationStrandValue="POSITIVE" shouldShowTranslation="false" visible="true"/>
+        <Track attributeKey="Refseq Genes" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;836.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/ncbiRefSeq.txt.gz" name="Refseq Genes" visible="true"/>
+        <Track attributeKey="igv_cohort_h1.bed.gz" clazz="org.broad.igv.track.FeatureTrack" displayMode="SQUISHED" featureVisibilityWindow="3354746" fontSize="15" groupByStrand="false" id="/Volumes/users/Greally Lab/David/AlleleStacker_tests/AlleleStacker/outputs/igv_beds/allele_stacks/igv_cohort_h1.bed.gz" name="NEW H1" visible="true"/>
+        <Track attributeKey="igv_cohort_h2.bed.gz" clazz="org.broad.igv.track.FeatureTrack" displayMode="SQUISHED" featureVisibilityWindow="3449993" fontSize="15" groupByStrand="false" id="/Volumes/users/Greally Lab/David/AlleleStacker_tests/AlleleStacker/outputs/igv_beds/allele_stacks/igv_cohort_h2.bed.gz" name="NEW H2" visible="true"/>
+        <Track attributeKey="igv_cohort_h1.bed.gz" clazz="org.broad.igv.track.FeatureTrack" displayMode="SQUISHED" featureVisibilityWindow="3441046" fontSize="15" groupByStrand="false" id="/Volumes/users/Greally Lab/David/AlleleStacker_tests/AlleleStacker/old_QC_AS/outputs/allele_stacks/all_samples/igv_cohort_h1.bed.gz" name="OLD H1" visible="true"/>
+        <Track attributeKey="igv_cohort_h2.bed.gz" clazz="org.broad.igv.track.FeatureTrack" displayMode="SQUISHED" featureVisibilityWindow="3431903" fontSize="15" groupByStrand="false" id="/Volumes/users/Greally Lab/David/AlleleStacker_tests/AlleleStacker/old_QC_AS/outputs/allele_stacks/all_samples/igv_cohort_h2.bed.gz" name="OLD H2" visible="true"/>
+    </Panel>
+    <PanelLayout dividerFractions="0.010112359550561797"/>
+    <HiddenAttributes>
+        <Attribute name="DATA FILE"/>
+        <Attribute name="DATA TYPE"/>
+        <Attribute name="NAME"/>
+    </HiddenAttributes>
+</Session>

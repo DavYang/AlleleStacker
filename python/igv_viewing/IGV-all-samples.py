@@ -11,7 +11,6 @@ from tqdm import tqdm
 import time
 import subprocess
 
-# Set up logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -30,61 +29,62 @@ def read_sample_list(sample_file):
         sys.exit(1)
 
 def process_file(args):
-    """Process a single file"""
-    file_path, haplotype = args
-    sample_id = Path(file_path).stem.replace('.meth_regions', '')
+    """Process methylated and unmethylated files for a sample"""
+    sample_id, input_dir, haplotype = args
     
     try:
-        # Read data
-        df = pd.read_csv(
-            file_path, 
-            sep='\t', 
-            header=None,
-            skiprows=1,
-            usecols=[0,1,2,3],
-            names=['chrom', 'start_pos', 'end_pos', 'name'],
-            dtype={
-                'chrom': 'category',
-                'start_pos': np.int32,
-                'end_pos': np.int32,
-                'name': str
-            }
-        )
+        # Read methylated and unmethylated files
+        m_file = Path(input_dir) / f"H{haplotype}_M" / f"{sample_id}_H{haplotype}_M.bed"
+        u_file = Path(input_dir) / f"H{haplotype}_U" / f"{sample_id}_H{haplotype}_U.bed"
         
-        # Filter for haplotype
-        mask = df['name'].str.startswith(f"{haplotype}_")
-        if not mask.any():
+        dfs = []
+        for file_path, is_meth in [(m_file, True), (u_file, False)]:
+            if file_path.exists():
+                df = pd.read_csv(
+                    file_path,
+                    sep='\t',
+                    dtype={
+                        'chrom': 'category',
+                        'start': np.int32,
+                        'end': np.int32,
+                        'summary_label': str,
+                        'size': np.int32
+                    }
+                )
+                df['color'] = '255,0,0' if is_meth else '0,0,255'
+                dfs.append(df)
+        
+        if not dfs:
             return None, sample_id, 0
             
-        df = df[mask]
-        region_count = len(df)
+        # Combine methylated and unmethylated data
+        combined_df = pd.concat(dfs, ignore_index=True)
+        combined_df = combined_df.sort_values(['chrom', 'start'])
         
-        # Add color based on methylation status
-        df['color'] = np.where(df['name'].str.contains('_M'), '255,0,0', '0,0,255')
-        df['sample_id'] = sample_id
-        df['score'] = 1000
-        df['strand'] = '.'
+        # Add required columns for IGV
+        combined_df['sample_id'] = sample_id
+        combined_df['score'] = 1000
+        combined_df['strand'] = '.'
         
-        return df, sample_id, region_count
+        return combined_df, sample_id, len(combined_df)
         
     except Exception as e:
-        logging.error(f"Error processing {file_path}: {e}")
+        logging.error(f"Error processing {sample_id}: {e}")
         return None, sample_id, 0
 
 def write_output_files(output_base, sample_data, ordered_samples, haplotype):
     """Write output files with consistent track positions"""
-    igv_file = f"{output_base}/igv_cohort_{haplotype.lower()}.igv.bed"
-    bed_file = f"{output_base}/igv_cohort_{haplotype.lower()}.bed"
+    igv_file = f"{output_base}/igv_cohort_h{haplotype.lower()}.igv.bed"
+    bed_file = f"{output_base}/igv_cohort_h{haplotype.lower()}.bed"
     regions_written = 0
     
-    # Write IGV file with tracks
     with open(igv_file, 'w') as igv_out, open(bed_file, 'w') as bed_out:
-        # Write track definitions at the start of IGV file
-        for i, sample_id in enumerate(ordered_samples):
+        # Write track definitions
+        for sample_id in ordered_samples:
             if sample_id in sample_data:
                 track_line = (
-                    f'track name="{sample_id}_{haplotype}" '
-                    f'description="{sample_id} {haplotype} Methylation" '
+                    f'track name="{sample_id}_H{haplotype}" '
+                    f'description="{sample_id} H{haplotype} Methylation" '
                     f'visibility=full '
                     f'autoScale=off '
                     f'viewLimits=0:1000 '
@@ -99,27 +99,22 @@ def write_output_files(output_base, sample_data, ordered_samples, haplotype):
             all_chroms.update(data['chrom'].unique())
 
         for chrom in sorted(all_chroms):
-            # For each chromosome, write samples in order
             for sample_id in ordered_samples:
                 if sample_id in sample_data:
                     data = sample_data[sample_id]
                     chrom_data = data[data['chrom'] == chrom]
                     
                     if not chrom_data.empty:
-                        # Sort by position within this sample/chromosome
-                        chrom_data = chrom_data.sort_values(['start_pos', 'end_pos'])
-                        
-                        # Write regions to both files
                         for _, row in chrom_data.iterrows():
                             bed_line = [
                                 row['chrom'],
-                                str(row['start_pos']),
-                                str(row['end_pos']),
-                                f"{sample_id}_{haplotype}",
+                                str(row['start']),
+                                str(row['end']),
+                                f"{sample_id}_H{haplotype}",
                                 str(row['score']),
                                 row['strand'],
-                                str(row['start_pos']),
-                                str(row['end_pos']),
+                                str(row['start']),
+                                str(row['end']),
                                 row['color']
                             ]
                             bed_string = '\t'.join(bed_line) + '\n'
@@ -132,91 +127,73 @@ def write_output_files(output_base, sample_data, ordered_samples, haplotype):
         logging.info("Creating tabix index...")
         sort_cmd = f"sort -k1,1 -k2,2n {bed_file} > {bed_file}.sorted"
         subprocess.run(sort_cmd, shell=True, check=True)
-        
-        # Replace original with sorted file
         os.rename(f"{bed_file}.sorted", bed_file)
-        
-        # Compress with bgzip
-        bgzip_cmd = f"bgzip -f {bed_file}"
-        subprocess.run(bgzip_cmd, shell=True, check=True)
-        
-        # Index with tabix
-        tabix_cmd = f"tabix -p bed {bed_file}.gz"
-        subprocess.run(tabix_cmd, shell=True, check=True)
-        
+        subprocess.run(f"bgzip -f {bed_file}", shell=True, check=True)
+        subprocess.run(f"tabix -p bed {bed_file}.gz", shell=True, check=True)
         logging.info("Successfully created tabix index")
-    except subprocess.CalledProcessError as e:
-        logging.error(f"Error during indexing: {e}")
     except Exception as e:
-        logging.error(f"Unexpected error during indexing: {e}")
+        logging.error(f"Error during indexing: {e}")
     
     return igv_file, f"{bed_file}.gz", regions_written
 
 def process_single_haplotype():
     parser = argparse.ArgumentParser(description="Process single haplotype for IGV visualization")
-    parser.add_argument("--input_dir", required=True)
+    parser.add_argument("--input_dir", required=True, help="Directory containing H1_M, H1_U, H2_M, H2_U subdirectories")
     parser.add_argument("--output_dir", required=True)
-    parser.add_argument("--haplotype", required=True, choices=['H1', 'H2'])
+    parser.add_argument("--haplotype", required=True, choices=['1', '2'])
     parser.add_argument("--sample_list", required=True, help="File containing sample IDs in desired order")
     parser.add_argument("--threads", type=int, default=4)
     
     args = parser.parse_args()
     
     start_time = time.time()
-    logging.info(f"Starting processing for {args.haplotype} haplotype")
+    logging.info(f"Starting processing for H{args.haplotype} haplotype")
     logging.info(f"Input directory: {args.input_dir}")
     logging.info(f"Output directory: {args.output_dir}")
-    logging.info(f"Sample list file: {args.sample_list}")
     logging.info(f"Using {args.threads} threads")
     
     os.makedirs(args.output_dir, exist_ok=True)
-    
-    # Read sample list
     ordered_samples = read_sample_list(args.sample_list)
     
     # Validate input files
-    input_files = []
     missing_files = []
     for sample in ordered_samples:
-        file_path = Path(args.input_dir) / f"{sample}.meth_regions.bed"
-        if file_path.exists():
-            input_files.append(file_path)
-        else:
+        m_file = Path(args.input_dir) / f"H{args.haplotype}_M" / f"{sample}_H{args.haplotype}_M.bed"
+        u_file = Path(args.input_dir) / f"H{args.haplotype}_U" / f"{sample}_H{args.haplotype}_U.bed"
+        if not (m_file.exists() or u_file.exists()):
             missing_files.append(sample)
     
     if missing_files:
-        logging.warning(f"Files not found for {len(missing_files)} samples: {', '.join(missing_files)}")
+        logging.warning(f"No files found for {len(missing_files)} samples: {', '.join(missing_files)}")
+        ordered_samples = [s for s in ordered_samples if s not in missing_files]
     
-    if not input_files:
+    if not ordered_samples:
         logging.error("No valid input files found")
         sys.exit(1)
     
-    logging.info(f"Found {len(input_files)} valid input files out of {len(ordered_samples)} samples")
-    
     # Process files in parallel
-    tasks = [(str(f), args.haplotype) for f in input_files]
+    tasks = [(s, args.input_dir, args.haplotype) for s in ordered_samples]
     sample_data = {}
     total_regions = 0
     processed_samples = 0
     
-    logging.info(f"Processing {len(tasks)} files in parallel...")
     with ProcessPoolExecutor(max_workers=args.threads) as executor:
         futures = {executor.submit(process_file, task): task for task in tasks}
         
         for future in tqdm(as_completed(futures), total=len(futures), desc="Processing samples"):
-            file_path, _ = futures[future]
+            sample_id, _, _ = futures[future]
             try:
                 data, sample_id, region_count = future.result()
                 if data is not None and not data.empty:
                     sample_data[sample_id] = data
                     total_regions += region_count
                     processed_samples += 1
-                    logging.info(f"Processed {sample_id}: found {region_count} {args.haplotype} regions")
+                    logging.info(f"Processed {sample_id}: found {region_count} H{args.haplotype} regions")
             except Exception as e:
-                logging.error(f"Error processing {file_path}: {e}")
+                logging.error(f"Error processing {sample_id}: {e}")
     
     if not sample_data:
-        logging.error(f"No {args.haplotype} regions found in any samples")
+        logging.error(f"No H{args.haplotype} regions found in any samples")
         sys.exit(1)
     
     logging.info(f"Writing output files with {total_regions} total regions from {processed_samples} samples...")
@@ -228,7 +205,6 @@ def process_single_haplotype():
     end_time = time.time()
     processing_time = end_time - start_time
     
-    # Final summary
     logging.info("=== Processing Summary ===")
     logging.info(f"Total processing time: {processing_time:.2f} seconds")
     logging.info(f"Samples processed: {processed_samples}/{len(ordered_samples)}")

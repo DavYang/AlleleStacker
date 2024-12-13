@@ -3,9 +3,7 @@
 #SBATCH --partition=quick
 #SBATCH --nodes=1
 #SBATCH --mem=32gb
-#SBATCH --output=consensus_regions.%A_%a.out
-#SBATCH --mail-type=END
-#SBATCH --mail-user=david.yang2@einsteinmed.edu
+#SBATCH --output=log.consensus_regions.%A_%a.out
 
 # Load conda environment
 source /public/apps/conda3/etc/profile.d/conda.sh

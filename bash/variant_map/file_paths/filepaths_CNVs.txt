@@ -1,0 +1,17 @@
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM161/hificnv.SPM161.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM180/hificnv.SPM180.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM187/hificnv.SPM187.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM198/hificnv.SPM198.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM202/hificnv.SPM202.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM206/hificnv.SPM206.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM212/hificnv.SPM212.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM231/hificnv.SPM231.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM248/hificnv.SPM248.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM276-1/hificnv.SPM276-1.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM282/hificnv.SPM282.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM296/hificnv.SPM296.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM300/hificnv.SPM300.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM303/hificnv.SPM303.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM314/hificnv.SPM314.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM320/hificnv.SPM320.vcf.gz
+/gs/gsfs0/shared-lab/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/hifi_cnvs/SPM321/hificnv.SPM321.vcf.gz

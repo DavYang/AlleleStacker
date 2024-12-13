@@ -46,7 +46,7 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
     
     # Specifically look for H1 and H2 files only
-    input_files = ['filtered_consensus_H1.bed', 'filtered_consensus_H2.bed']
+    input_files = ['filtered_candidate_H1.bed', 'filtered_candidate_H2.bed']
     
     for filename in input_files:
         input_file = input_dir / filename

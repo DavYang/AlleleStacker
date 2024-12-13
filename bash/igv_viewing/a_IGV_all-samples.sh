@@ -4,11 +4,9 @@
 #SBATCH --mem=32gb
 #SBATCH --time=2:00:00
 #SBATCH --job-name=meth_vis
-#SBATCH --output=meth_vis_%A_%a.out
-#SBATCH --error=meth_vis_%A_%a.err
+#SBATCH --output=log.IGV-all_%A_%a.out
+#SBATCH --error=log.IGV-all_%A_%a.err
 #SBATCH --array=0-1
-#SBATCH --mail-type=END
-#SBATCH --mail-user=david.yang@einsteinmed.edu
 
 # Exit on error, undefined variables, and pipe failures
 set -euo pipefail
@@ -28,13 +26,13 @@ conda activate anc_vig
 # Define paths
 INPUT_DIR="$1"
 OUTPUT_DIR="$2"
-SCRIPT_DIR="./python/igv_viewing"
-SAMPLE_LIST="./bash/pileup_QC/sample_list.txt"
+SCRIPT_DIR="python/igv_viewing"
+SAMPLE_LIST="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/bash/pileup_QC/sample_list.txt"
 
 mkdir -p $OUTPUT_DIR
 
 # Array of haplotypes
-HAPLOTYPES=("hap1" "")
+HAPLOTYPES=("1" "2")
 HAPLOTYPE=${HAPLOTYPES[$SLURM_ARRAY_TASK_ID]}
 
 echo "Starting processing at $(date)"
@@ -48,11 +46,10 @@ python ${SCRIPT_DIR}/IGV-all-samples.py \
     --sample_list "$SAMPLE_LIST" \
     --threads 20
 
-
 echo "Python processing completed at $(date)"
 
 # Set up output file names
-BED_FILE="${OUTPUT_DIR}/igv_cohort_${HAPLOTYPE}.bed"
+BED_FILE="${OUTPUT_DIR}/igv_cohort_${HAPLOTYPE,,}.bed"
 
 if [[ -f "$BED_FILE" ]]; then
     echo "Processing output files..."
