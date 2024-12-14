@@ -5,6 +5,7 @@
 
 # Ignore the outputs directory
 outputs/*
+EDA_visualizations/outputs/*
 
 # Ignore all .DS_Store files (macOS)
 .DS_Store

@@ -63,7 +63,9 @@ class MultiSampleAnalyzer:
             'Destroyed': ('hap1_Destroyed', 'hap2_Destroyed', 'CpG Sites Destroyed'),
             'Phantom': ('hap1_Phantom', 'hap2_Phantom', 'Phantom CpG Sites'),
             'Preserved': ('hap1_Preserved', 'hap2_Preserved', 'Preserved CpG Sites'),
-            'AdjDestroyed': ('hap1_AdjDestroyed', 'hap2_AdjDestroyed', 'Adjusted CpG Sites Destroyed (Destroyed - Preserved)')
+            'AdjDestroyed': ('hap1_AdjDestroyed', 'hap2_AdjDestroyed', 
+                            'Adjusted CpG Sites Destroyed (Destroyed - Preserved)'),
+            'Denovo': ('hap1_Denovo', 'hap2_Denovo', 'De Novo CpG Sites')
         }
         
         x = np.arange(len(df))
@@ -141,7 +143,8 @@ class MultiSampleAnalyzer:
         df['hap2_AdjDestroyed'] = df['hap2_Destroyed'] - df['hap2_Preserved']
         
         stats_data = []
-        metrics = ['Total', 'Kept', 'Excl', 'Destroyed', 'Phantom', 'Preserved', 'AdjDestroyed']
+        metrics = ['Total', 'Kept', 'Excl', 'Destroyed', 'Phantom', 'Preserved', 
+                  'AdjDestroyed', 'Denovo']
         
         for hap in ['hap1', 'hap2']:
             for metric in metrics:
@@ -169,6 +172,8 @@ class MultiSampleAnalyzer:
             f.write("CpG Analysis Summary Report\n")
             f.write("==========================\n\n")
             
+            f.write(f"Total Samples Analyzed: {len(df)}\n\n")
+            
             # Write statistics for each haplotype
             for hap in ['hap1', 'hap2']:
                 f.write(f"\n{hap.upper()} Summary Statistics:\n")
@@ -191,11 +196,21 @@ class MultiSampleAnalyzer:
                 destroyed = df[f'{hap}_Destroyed'].mean()
                 preserved = df[f'{hap}_Preserved'].mean()
                 adj_destroyed = df[f'{hap}_AdjDestroyed'].mean()
+                denovo = df[f'{hap}_Denovo'].mean()
                 
                 f.write(f"\n{hap.upper()}:\n")
                 f.write(f"  Kept/Total: {(kept/total)*100:.2f}%\n")
                 f.write(f"  Excluded/Total: {(excl/total)*100:.2f}%\n")
                 f.write(f"  Adjusted Destroyed/Total: {(adj_destroyed/total)*100:.2f}%\n")
+                f.write(f"  De Novo/Total: {(denovo/total)*100:.2f}%\n")
+                
+            # Write comparison between haplotypes
+            f.write("\nHaplotype Comparisons:\n")
+            f.write("-" * 20 + "\n")
+            for metric in metrics:
+                if f'hap1_{metric}' in df.columns and f'hap2_{metric}' in df.columns:
+                    diff = df[f'hap1_{metric}'].mean() - df[f'hap2_{metric}'].mean()
+                    f.write(f"{metric} difference (Hap1 - Hap2): {diff:,.2f}\n")
 
     def run_analysis(self) -> None:
         """Run complete analysis pipeline"""

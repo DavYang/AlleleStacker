@@ -14,6 +14,12 @@
 # Exit on error
 set -e
 
+# Set paths
+VARIANT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/merged_variants"
+PYTHON_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/python"
+OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/variant_mapping"
+
+
 # Load conda environment
 source /public/apps/conda3/etc/profile.d/conda.sh
 conda activate anc_vig
@@ -27,10 +33,6 @@ else
     BED_FILE="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-19-24/outputs/filtered_consensus_regions/min_sample-1/filtered_consensus_H2.bed"
 fi
 
-# Set paths
-VARIANT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/merged_variants"
-PYTHON_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/python"
-OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/variant_mapping"
 
 # Create timestamped output directory
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
