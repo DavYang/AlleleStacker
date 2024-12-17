@@ -13,10 +13,10 @@ source /public/apps/conda3/etc/profile.d/conda.sh
 conda activate anc_vig
 
 # Set the base directory
-BASE_DIR="/gs/gsfs0/users/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/cpg_pileup_beds"
+BASE_DIR="$1"
 
 # Set the output base directory
-OUTPUT_BASE_DIR="/gs/gsfs0/shared-lab/greally-lab/David/simple_allele-stacker/EDA_visualizations/outputs/cpg_pileups"
+OUTPUT_BASE_DIR="$2"
 
 # Add debugging information
 echo "Current working directory: $(pwd)"

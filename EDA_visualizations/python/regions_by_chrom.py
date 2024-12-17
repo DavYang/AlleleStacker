@@ -2,104 +2,72 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import argparse
 import numpy as np
+import os
 
-def plot_regions_per_chromosome(h1_file_path, h2_file_path, output_prefix):
-    # Read the data for both haplotypes
-    df_h1 = pd.read_csv(h1_file_path, sep='\t')
-    df_h2 = pd.read_csv(h2_file_path, sep='\t')
+def plot_regions_per_chromosome(h1_file_path, h2_file_path, output_dir):
+    # Create output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
     
-    # Count the number of regions per chromosome for both haplotypes
-    chromosome_counts_h1 = df_h1['chrom'].value_counts().sort_index()
-    chromosome_counts_h2 = df_h2['chrom'].value_counts().sort_index()
+    # Read the BED files
+    h1_df = pd.read_csv(h1_file_path, sep='\t', header=None)
+    h2_df = pd.read_csv(h2_file_path, sep='\t', header=None)
     
-    # Calculate overall averages
-    h1_avg = chromosome_counts_h1.mean()
-    h2_avg = chromosome_counts_h2.mean()
+    # Name the columns
+    bed_columns = ['chrom', 'start', 'end', 'num_unmethylated', 'num_methylated', 
+                  'unmethylated_samples', 'methylated_samples']
+    h1_df.columns = bed_columns
+    h2_df.columns = bed_columns
     
-    # Define the order of chromosomes
-    chromosome_order = [f'chr{i}' for i in range(1, 23)] + ['chrX', 'chrY']
+    # Count regions per chromosome for each haplotype
+    h1_counts = h1_df['chrom'].value_counts().sort_index()
+    h2_counts = h2_df['chrom'].value_counts().sort_index()
     
-    # Reindex the counts to ensure all chromosomes are included and in the correct order
-    chromosome_counts_h1 = chromosome_counts_h1.reindex(chromosome_order, fill_value=0)
-    chromosome_counts_h2 = chromosome_counts_h2.reindex(chromosome_order, fill_value=0)
+    # Get all unique chromosomes
+    all_chroms = sorted(set(h1_counts.index) | set(h2_counts.index))
     
-    # Calculate per-chromosome averages
-    chr_averages = (chromosome_counts_h1 + chromosome_counts_h2) / 2
-    
-    # Set up the plot with larger figure size
+    # Create figure and axis
     plt.figure(figsize=(15, 8))
     
-    # Set font sizes
-    SMALL_SIZE = 14
-    MEDIUM_SIZE = 18
-    LARGE_SIZE = 26
-
-    plt.rc('font', size=SMALL_SIZE)
-    plt.rc('axes', titlesize=LARGE_SIZE)
-    plt.rc('axes', labelsize=MEDIUM_SIZE)
-    plt.rc('xtick', labelsize=SMALL_SIZE)
-    plt.rc('ytick', labelsize=SMALL_SIZE)
-    plt.rc('legend', fontsize=MEDIUM_SIZE)
-    
-    # Set the positions of the bars
-    x = np.arange(len(chromosome_order))
+    # Set bar positions
+    x = np.arange(len(all_chroms))
     width = 0.35
     
-    # Create the bars
-    plt.bar(x - width/2, chromosome_counts_h1, width, 
-            label=f'Haplotype 1', color='purple', alpha=0.7)
-    plt.bar(x + width/2, chromosome_counts_h2, width, 
-            label=f'Haplotype 2', color='green', alpha=0.7)
+    # Create bars
+    h1_values = [h1_counts.get(chrom, 0) for chrom in all_chroms]
+    h2_values = [h2_counts.get(chrom, 0) for chrom in all_chroms]
     
-    # Add average values as diagonal text above the bars
-    for i, avg in enumerate(chr_averages):
-        plt.text(x[i], max(chromosome_counts_h1[i], chromosome_counts_h2[i]) + 50,
-        f'{int(avg)}', ha='center', va='bottom', fontsize=12,  # Changed to integer format
-        rotation=45)  # Added rotation for diagonal text
+    plt.bar(x - width/2, h1_values, width, label='H1', color='#3182bd', alpha=0.7)
+    plt.bar(x + width/2, h2_values, width, label='H2', color='#e6550d', alpha=0.7)
     
-    
-    # Customize the plot
-    # plt.xlabel('Chromosome', fontsize=MEDIUM_SIZE, labelpad=10)
-    plt.ylabel('# of Regions', fontsize=MEDIUM_SIZE, labelpad=10)
-    plt.title('Genome Wide Distribution of Allele Stacker Consensus Regions', fontsize=LARGE_SIZE, pad=20)
-    plt.xticks(x, chromosome_order, rotation=45)
+    # Customize plot
+    plt.xlabel('Chromosome', fontsize=12)
+    plt.ylabel('Number of Regions', fontsize=12)
+    plt.title('Distribution of Regions Across Chromosomes by Haplotype', fontsize=14, pad=20)
+    plt.xticks(x, all_chroms, rotation=45)
     plt.legend()
+    plt.grid(True, axis='y', linestyle='--', alpha=0.7)
     
-    # Remove top and right spines
-    plt.gca().spines['top'].set_visible(False)
-    plt.gca().spines['right'].set_visible(False)
+    # Add value labels on top of bars
+    for i, v in enumerate(h1_values):
+        plt.text(i - width/2, v, str(v), ha='center', va='bottom')
+    for i, v in enumerate(h2_values):
+        plt.text(i + width/2, v, str(v), ha='center', va='bottom')
     
-    # Add grid lines for better readability
-    plt.grid(axis='y', linestyle='--', alpha=0.3)
-    
-    # Set y-axis limit without extra top tick
-    max_count = max(max(chromosome_counts_h1), max(chromosome_counts_h2))
-    y_max = max_count * 1.15  # Increased padding to accommodate average labels
-    plt.ylim(0, y_max)
-    
-    # Adjust layout
+    # Adjust layout to prevent label cutoff
     plt.tight_layout()
     
     # Save plot
-    plot_path = f'{output_prefix}_regions_per_chromosome.png'
+    plot_path = os.path.join(output_dir, 'regions_per_chromosome.png')
     plt.savefig(plot_path, dpi=300, bbox_inches='tight', facecolor='white')
     plt.close()
-    
-    # Print summary statistics
-    print(f"\nSummary Statistics:")
-    print(f"Haplotype 1 average regions per chromosome: {h1_avg:.1f}")
-    print(f"Haplotype 2 average regions per chromosome: {h2_avg:.1f}")
-    print("\nPer-chromosome averages:")
-    for chr_name, avg in zip(chromosome_order, chr_averages):
-        print(f"{chr_name}: {avg:.1f}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Plot regions per chromosome for both haplotypes.')
     parser.add_argument('input_dir', type=str, help='Path to the input directory containing .bed files')
-    parser.add_argument('output_prefix', type=str, help='Prefix for the output plot file')
+    parser.add_argument('output_dir', type=str, help='Directory where the plot will be saved')
     args = parser.parse_args()
     
-    h1_file_path = f"{args.input_dir}/filtered_consensus_H1.bed"
-    h2_file_path = f"{args.input_dir}/filtered_consensus_H2.bed"
+    h1_file_path = f"{args.input_dir}/filtered_candidate_H1.bed"
+    h2_file_path = f"{args.input_dir}/filtered_candidate_H2.bed"
     
-    plot_regions_per_chromosome(h1_file_path, h2_file_path, args.output_prefix)
+    plot_regions_per_chromosome(h1_file_path, h2_file_path, args.output_dir)

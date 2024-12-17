@@ -1,2 +1,0 @@
-/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/EDA_visualizations/./python/regions_by_chrom.py:56: FutureWarning: Series.__getitem__ treating keys as positions is deprecated. In a future version, integer keys will always be treated as labels (consistent with DataFrame behavior). To access a value by position, use `ser.iloc[pos]`
-  plt.text(x[i], max(chromosome_counts_h1[i], chromosome_counts_h2[i]) + 50,

@@ -23,21 +23,41 @@ if [ ! -f "$CONFIG_FILE" ]; then
     exit 1
 fi
 
-# Load config - Fixed version
-eval "$(python3 -c 'import yaml;
-import json;
-with open("'"$CONFIG_FILE"'") as f:
-    cfg = yaml.safe_load(f);
-for k,v in cfg.items():
-    if isinstance(v, dict):
-        for sk,sv in v.items():
-            print(f"{k}_{sk}={json.dumps(str(sv))}");
-    else:
-        print(f"{k}={json.dumps(str(v))}");
-')" || {
-    echo "Error loading config file"
-    exit 1
-}
+# Parse config file
+while IFS= read -r line || [[ -n "$line" ]]; do
+    # Skip empty lines and comments
+    [[ -z "$line" || "$line" =~ ^[[:space:]]*#.*$ ]] && continue
+    
+    # Remove leading/trailing whitespace and comments
+    line=$(echo "$line" | sed 's/#.*$//' | xargs)
+    [[ -z "$line" ]] && continue
+    
+    # Check if line contains a colon (key-value pair)
+    if [[ "$line" == *":"* ]]; then
+        # Extract key and value
+        key=$(echo "$line" | cut -d: -f1 | xargs)
+        value=$(echo "$line" | cut -d: -f2- | sed 's/^[[:space:]]*"//' | sed 's/"[[:space:]]*$//' | xargs)
+        
+        # Convert key format (remove spaces and dashes)
+        key=$(echo "$key" | tr -d ' ' | tr '-' '_')
+        
+        # Special handling for nested conda settings
+        if [[ "$key" == "conda" ]]; then
+            in_conda_section=true
+            continue
+        fi
+        
+        if [[ "$in_conda_section" == true ]]; then
+            if [[ "$key" == "analysis_env" ]]; then
+                declare "conda_analysis_env=$value"
+                in_conda_section=false
+            fi
+        else
+            # Regular variable declaration
+            declare "$key=$value"
+        fi
+    fi
+done < "$CONFIG_FILE"
 
 # Create base directories
 mkdir -p "${BASE_OUTPUT_DIR}"
@@ -51,11 +71,10 @@ while read SAMPLE; do
     SAMPLE_DIR="${BASE_OUTPUT_DIR}/${SAMPLE}"
     mkdir -p "${SAMPLE_DIR}"
 
-
     sbatch \
         --job-name="${SAMPLE}" \
-        --partition=normal \
-        --time=2-00:00:00 \
+        --partition=quick \
+        --time=4:00:00 \
         --mem=32G \
         --cpus-per-task=40 \
         --output="${BASE_OUTPUT_DIR}/logs/${SAMPLE}_%j.out" \

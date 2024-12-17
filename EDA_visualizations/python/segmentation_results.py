@@ -3,34 +3,34 @@ import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import glob
-import numpy as np
 from matplotlib.ticker import ScalarFormatter, FormatStrFormatter
 
 # Check if correct number of arguments is provided
-if len(sys.argv) != 4:
-    print("Usage: python segmentation_results.py <input_dir> <output_dir> <sample_name>")
+if len(sys.argv) != 2:
+    print("Usage: python methylation_analysis.py <sample_name>")
+    print("Example: python methylation_analysis.py SPM180")
     sys.exit(1)
 
-# Get input and output directories and sample name from command line arguments
-input_dir = sys.argv[1]
-output_dir = sys.argv[2]
-sample_name = sys.argv[3]
+# Get sample name from command line arguments
+sample_name = sys.argv[1]
 
-# Ensure output directory exists
-os.makedirs(output_dir, exist_ok=True)
+# Files are in current directory
+current_dir = os.getcwd()
 
-# Define the order of labels for the x-axis
-label_order = ['H1_M', 'H1_U', 'H2_M', 'H2_U', 'ASM']
+# Define the names of input files based on your structure
+hap1_file = f"{sample_name}.hap1.meth_regions.bed"
+hap2_file = f"{sample_name}.hap2.meth_regions.bed"
 
-# Define colors for each label
+# Define colors for visualization - red for methylated, blue for unmethylated
 color_map = {
-    'H1_M': '#800080',  # Purple
-    'H1_U': '#9370DB',  # Medium purple
-    'H2_M': '#006400',  # Dark green
-    'H2_U': '#008000',  # Green
-    'ASM': '#4B0082'    # Indigo (mix of green and blue)
+    'Hap1-M': '#FF0000',  # Red
+    'Hap1-U': '#0000FF',  # Blue
+    'Hap2-M': '#FF6666',  # Light red
+    'Hap2-U': '#6666FF'   # Light blue
 }
+
+# Define the order of categories for consistent plotting
+category_order = ['Hap1-M', 'Hap1-U', 'Hap2-M', 'Hap2-U']
 
 # Define font sizes
 TITLE_FONT_SIZE = 20
@@ -43,85 +43,103 @@ def set_scientific_notation(ax):
     formatter.set_powerlimits((-1, 1))
     ax.yaxis.set_major_formatter(formatter)
     ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    
-    # Format each tick label
     ax.yaxis.set_major_formatter(FormatStrFormatter('%.1e'))
 
-# Function to process a single file and create a plot
-def process_file(file_path):
-    # Read the BED file
-    df = pd.read_csv(file_path, sep='\t', comment='#', header=0, names=['chrom', 'start', 'end', 'summary_label'])
+def read_and_process_file(file_path, haplotype):
+    """Read and process a single methylation regions file"""
+    if not os.path.exists(file_path):
+        print(f"Error: File not found: {file_path}")
+        return None
     
-    # Count the occurrences of each label
-    counts = df['summary_label'].value_counts()
+    df = pd.read_csv(file_path, sep='\t', comment='#')
+    df['size'] = df['end'] - df['start']
+    # Add haplotype-specific labels
+    df['category'] = df['summary_label'].apply(lambda x: f"{haplotype}-{x}")
+    return df
+
+def create_plots(combined_df, sample_name):
+    """Create plots for methylation status across haplotypes"""
     
-    # Ensure all labels are present, fill with 0 if missing
-    for label in label_order:
-        if label not in counts:
-            counts[label] = 0
+    # Plot 1: Region Counts by Methylation Status and Haplotype
+    fig, ax = plt.subplots(figsize=(12, 6))
     
-    # Sort the counts according to the specified order
-    counts = counts.reindex(label_order)
+    # Count regions for each category
+    counts = combined_df['category'].value_counts().reindex(category_order).fillna(0)
     
-    # Create the plot
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.barplot(x=counts.index, y=counts.values, hue=counts.index, palette=color_map, legend=False, ax=ax)
-    plt.title(f'Segmentation Regions for Sample: {sample_name}', fontsize=TITLE_FONT_SIZE)
-    plt.xlabel('Region Label', fontsize=AXIS_LABEL_FONT_SIZE)
+    sns.barplot(x=counts.index, y=counts.values, palette=[color_map[cat] for cat in category_order], ax=ax)
+    plt.title(f'Methylation Region Counts for {sample_name}', fontsize=TITLE_FONT_SIZE)
+    plt.xlabel('Category', fontsize=AXIS_LABEL_FONT_SIZE)
     plt.ylabel('Count', fontsize=AXIS_LABEL_FONT_SIZE)
     plt.xticks(rotation=45, fontsize=TICK_LABEL_FONT_SIZE)
     plt.yticks(fontsize=TICK_LABEL_FONT_SIZE)
     
-    # Set y-axis to use scientific notation for ticks
     set_scientific_notation(ax)
+    ax.yaxis.set_label_coords(-0.1, 0.5)
     
-    # Adjust y-axis label position
-    ax.yaxis.set_label_coords(-0.15, 0.5)
-    
-    # Save the plot
-    plt.savefig(os.path.join(output_dir, f'{sample_name}_region_label_counts.png'), bbox_inches='tight')
+    plt.savefig(f'{sample_name}_methylation_counts.png', bbox_inches='tight')
     plt.close()
-
-    # Generate plot for average sizes and standard deviation
-    plot_region_sizes(df, sample_name, output_dir)
-
-def plot_region_sizes(df, sample_name, output_dir):
-    # Calculate region sizes
-    df['size'] = df['end'] - df['start']
     
-    # Calculate average size and standard deviation for each label
-    size_stats = df.groupby('summary_label')['size'].agg(['mean', 'std']).reindex(label_order)
-    
-    # Create the plot
+    # Plot 2: Region Sizes by Methylation Status and Haplotype
     fig, ax = plt.subplots(figsize=(12, 6))
     
-    # Plot average sizes
-    sns.barplot(x=size_stats.index, y=size_stats['mean'], hue=size_stats.index, palette=color_map, legend=False, ax=ax)
+    # Calculate statistics for each category
+    size_stats = combined_df.groupby('category')['size'].agg(['mean', 'std']).reindex(category_order)
     
-    # Add error bars for standard deviation
-    plt.errorbar(x=range(len(size_stats)), y=size_stats['mean'], yerr=size_stats['std'], fmt='none', color='black', capsize=5)
+    # Create bar plot with error bars
+    sns.barplot(x=size_stats.index, y=size_stats['mean'], 
+               palette=[color_map[cat] for cat in category_order], ax=ax)
+    plt.errorbar(x=range(len(size_stats)), y=size_stats['mean'], 
+                yerr=size_stats['std'], fmt='none', color='black', capsize=5)
     
-    plt.title(f'Average Region Sizes for Sample: {sample_name}', fontsize=TITLE_FONT_SIZE)
-    plt.xlabel('Region Label', fontsize=AXIS_LABEL_FONT_SIZE)
+    plt.title(f'Average Region Sizes for {sample_name}', fontsize=TITLE_FONT_SIZE)
+    plt.xlabel('Category', fontsize=AXIS_LABEL_FONT_SIZE)
     plt.ylabel('Average Size (bp)', fontsize=AXIS_LABEL_FONT_SIZE)
     plt.xticks(rotation=45, fontsize=TICK_LABEL_FONT_SIZE)
     plt.yticks(fontsize=TICK_LABEL_FONT_SIZE)
     
-    # Set y-axis to use scientific notation for ticks
     set_scientific_notation(ax)
+    ax.yaxis.set_label_coords(-0.1, 0.5)
     
-    # Adjust y-axis label position
-    ax.yaxis.set_label_coords(-0.15, 0.5)
-    
-    # Save the plot
-    plt.savefig(os.path.join(output_dir, f'{sample_name}_region_sizes.png'), bbox_inches='tight')
+    plt.savefig(f'{sample_name}_region_sizes.png', bbox_inches='tight')
     plt.close()
 
-# Process the file for the given sample
-file_path = os.path.join(input_dir, f"{sample_name}.meth_regions.bed")
-if os.path.exists(file_path):
-    process_file(file_path)
-    print(f"Processed {sample_name}. Plot saved in {output_dir}")
-else:
-    print(f"Error: File not found for sample {sample_name}")
-    sys.exit(1)
+def print_summary_statistics(combined_df):
+    """Print summary statistics for all categories"""
+    print("\nSummary Statistics:")
+    
+    # Count statistics
+    counts = combined_df['category'].value_counts().reindex(category_order).fillna(0)
+    print("\nRegion Counts:")
+    for category in category_order:
+        print(f"{category}: {counts[category]:.0f} regions")
+    
+    # Size statistics
+    size_stats = combined_df.groupby('category')['size'].agg(['mean', 'std']).reindex(category_order)
+    print("\nRegion Sizes:")
+    for category in category_order:
+        if category in size_stats.index:
+            mean = size_stats.loc[category, 'mean']
+            std = size_stats.loc[category, 'std']
+            print(f"{category}: {mean:.2f} ± {std:.2f} bp")
+
+# Main execution
+def main():
+    # Read and process both files
+    hap1_df = read_and_process_file(hap1_file, "Hap1")
+    hap2_df = read_and_process_file(hap2_file, "Hap2")
+    
+    if hap1_df is None or hap2_df is None:
+        sys.exit(1)
+    
+    # Combine the dataframes
+    combined_df = pd.concat([hap1_df, hap2_df])
+    
+    # Create the plots
+    create_plots(combined_df, sample_name)
+    print(f"Analysis complete for {sample_name}. Plots saved in current directory.")
+    
+    # Print summary statistics
+    print_summary_statistics(combined_df)
+
+if __name__ == "__main__":
+    main()

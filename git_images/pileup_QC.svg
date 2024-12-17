@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700">
+    <!-- Style definitions -->
+    <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+        </marker>
+    </defs>
+    
+    <!-- Main Input Files -->
+    <rect x="50" y="20" width="120" height="60" rx="5" fill="#e1f5fe" stroke="#01579b"/>
+    <text x="110" y="50" text-anchor="middle" font-size="14">VCF File</text>
+    <rect x="200" y="20" width="120" height="60" rx="5" fill="#e1f5fe" stroke="#01579b"/>
+    <text x="260" y="50" text-anchor="middle" font-size="14">Reference FASTA</text>
+    <rect x="350" y="20" width="120" height="60" rx="5" fill="#e1f5fe" stroke="#01579b"/>
+    <text x="410" y="50" text-anchor="middle" font-size="14">BED Files</text>
+
+    <!-- Data Processing Section -->
+    <rect x="100" y="150" width="200" height="100" rx="5" fill="#e8f5e9" stroke="#2e7d32"/>
+    <text x="200" y="180" text-anchor="middle" font-size="14">Variant Processing</text>
+    <text x="200" y="200" text-anchor="middle" font-size="12">- Convert to VariantData</text>
+    <text x="200" y="220" text-anchor="middle" font-size="12">- Chunk for parallel processing</text>
+
+    <!-- CpG Effect Analysis -->
+    <rect x="400" y="150" width="200" height="120" rx="5" fill="#fff3e0" stroke="#e65100"/>
+    <text x="500" y="180" text-anchor="middle" font-size="14">CpG Effect Analysis</text>
+    <text x="500" y="200" text-anchor="middle" font-size="12">- Check sequence context</text>
+    <text x="500" y="220" text-anchor="middle" font-size="12">- Identify CpG changes</text>
+    <text x="500" y="240" text-anchor="middle" font-size="12">- Classify effects by genotype</text>
+
+    <!-- Filtering Process -->
+    <rect x="250" y="350" width="200" height="120" rx="5" fill="#f3e5f5" stroke="#4a148c"/>
+    <text x="350" y="380" text-anchor="middle" font-size="14">Site Filtering</text>
+    <text x="350" y="400" text-anchor="middle" font-size="12">- Exclude destroyed sites</text>
+    <text x="350" y="420" text-anchor="middle" font-size="12">- Exclude phantom sites</text>
+    <text x="350" y="440" text-anchor="middle" font-size="12">- Preserve high-conf sites</text>
+
+    <!-- Output Generation -->
+    <rect x="100" y="550" width="150" height="80" rx="5" fill="#ffebee" stroke="#b71c1c"/>
+    <text x="175" y="580" text-anchor="middle" font-size="14">Filtered BED Files</text>
+    <text x="175" y="600" text-anchor="middle" font-size="12">Passing/Excluded</text>
+
+    <rect x="300" y="550" width="150" height="80" rx="5" fill="#ffebee" stroke="#b71c1c"/>
+    <text x="375" y="580" text-anchor="middle" font-size="14">Statistics</text>
+    <text x="375" y="600" text-anchor="middle" font-size="12">Reports &amp; Plots</text>
+
+    <!-- Connecting Arrows -->
+    <line x1="110" y1="80" x2="180" y2="150" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="260" y1="80" x2="210" y2="150" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="300" y1="200" x2="400" y2="200" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="270" x2="350" y2="350" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="350" y1="470" x2="175" y2="550" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="350" y1="470" x2="375" y2="550" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="410" y1="80" x2="350" y2="350" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+    <!-- Legend -->
+    <rect x="650" y="20" width="200" height="150" rx="5" fill="#ffffff" stroke="#666"/>
+    <text x="750" y="40" text-anchor="middle" font-size="14" font-weight="bold">Legend</text>
+    
+    <rect x="670" y="60" width="20" height="20" fill="#e1f5fe" stroke="#01579b"/>
+    <text x="700" y="75" font-size="12" x="700">Input Files</text>
+    
+    <rect x="670" y="90" width="20" height="20" fill="#e8f5e9" stroke="#2e7d32"/>
+    <text x="700" y="105" font-size="12">Data Processing</text>
+    
+    <rect x="670" y="120" width="20" height="20" fill="#fff3e0" stroke="#e65100"/>
+    <text x="700" y="135" font-size="12">Analysis</text>
+    
+    <rect x="670" y="150" width="20" height="20" fill="#ffebee" stroke="#b71c1c"/>
+    <text x="700" y="165" font-size="12">Output</text>
+</svg>

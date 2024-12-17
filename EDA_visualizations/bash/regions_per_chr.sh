@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=regions-per-chr
-#SBATCH --output=log/regions_%A_%a.out
-#SBATCH --error=log/regions_%A_%a.err
+#SBATCH --output=logs/regions_%A_%a.out
+#SBATCH --error=logs/regions_%A_%a.err
 #SBATCH --partition=quick
 #SBATCH --mem=16G
 #SBATCH --time=02:00:00
@@ -17,7 +17,10 @@ fi
 
 # Assign arguments to variables
 INPUT_DIR=$1
-OUTPUT_PREFIX=$2
+OUTPUT_DIR=$2
+
+
+mkdir -p "$OUTPUT_DIR"
 
 # Run the Python script with the provided arguments
-python ./python/regions_by_chrom.py "$INPUT_DIR" "$OUTPUT_PREFIX"
+python ./python/regions_by_chrom.py "$INPUT_DIR" "$OUTPUT_DIR/"

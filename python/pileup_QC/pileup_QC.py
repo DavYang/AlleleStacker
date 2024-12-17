@@ -297,7 +297,12 @@ class CpGVariantFilter:
                     f'{hap}_Excl': self.results[hap]['excluded_sites'],
                     f'{hap}_Destroyed': len(self.effects[hap].ref_destroyed),
                     f'{hap}_Phantom': len(self.effects[hap].phantom_sites),
-                    f'{hap}_Preserved': len(self.preserved_sites[hap])
+                    f'{hap}_Preserved': len(self.preserved_sites[hap]),
+                    # Add denovo CpG counts
+                    f'{hap}_Denovo_CpGs': len(self.effects[hap].denovo_created),
+                    f'{hap}_Homo_Denovo': len(self.effects[hap].homozygous_denovo),
+                    # Combined denovo count for plotting script compatibility
+                    f'{hap}_Denovo': len(self.effects[hap].denovo_created) + len(self.effects[hap].homozygous_denovo)
                 })
         
         summary_df = pd.DataFrame([summary_data])
@@ -327,6 +332,7 @@ class CpGVariantFilter:
                 f.write(f"Ref CpGs lost: {len(self.effects[haplotype].ref_destroyed)}\n")
                 f.write(f"Denovo CpGs: {len(self.effects[haplotype].denovo_created)}\n")
                 f.write(f"Homo denovo: {len(self.effects[haplotype].homozygous_denovo)}\n")
+                f.write(f"Total denovo: {len(self.effects[haplotype].denovo_created) + len(self.effects[haplotype].homozygous_denovo)}\n")
                 f.write(f"Phantom CpGs: {len(self.effects[haplotype].phantom_sites)}\n")
                 f.write(f"Var positions: {len(self.effects[haplotype].variant_positions)}\n")
                 

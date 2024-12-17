@@ -12,16 +12,31 @@
 source /public/apps/conda3/etc/profile.d/conda.sh
 conda activate anc_vig
 
-INPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/outputs/segmentation_regions"
-OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/EDA_visualizations/outputs/segmentation_EDA/region_counts"
+INPUT_DIR="$1"
+OUTPUT_DIR="$2"
 
 mkdir -p $OUTPUT_DIR
 
- # Get the list of sample names
-SAMPLES=($(ls $INPUT_DIR/*.meth_regions.bed | xargs -n 1 basename | sed 's/\.meth_regions\.bed//'))
+# Debug exactly where we are and what's here
+echo "Current directory:"
+pwd
+echo -e "\nDirectory contents:"
+ls -la
+echo -e "\nParent directory contents:"
+ls -la ..
+
+# Get the list of sample names excluding non-sample directories
+SAMPLES=($(ls -d SPM* | grep -v "log_files\|regions_by_label\|segmentation_scripts" | sort))
+
+# Debug print
+echo -e "\nFound samples: ${SAMPLES[@]}"
+echo "Total samples: ${#SAMPLES[@]}"
+echo "Processing array task: $SLURM_ARRAY_TASK_ID"
 
 # Get the current sample based on the array task ID
 SAMPLE=${SAMPLES[$SLURM_ARRAY_TASK_ID - 1]}
+
+echo "Processing sample: $SAMPLE"
 
 # Run the Python script for the current sample
 python ./python/segmentation_results.py "$INPUT_DIR" "$OUTPUT_DIR" "$SAMPLE"
