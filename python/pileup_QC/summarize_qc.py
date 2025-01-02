@@ -47,7 +47,13 @@ class CpGPlotter:
             raise ValueError("No valid data files could be loaded")
             
         combined_df = pd.concat(dfs, ignore_index=True)
-        return combined_df.drop_duplicates()
+        final_df = combined_df.drop_duplicates()
+        
+        # Log sample count information
+        sample_count = len(final_df)
+        logging.info(f"Analysis complete - processed {sample_count} unique samples")
+        
+        return final_df
 
     def generate_plots(self, df: pd.DataFrame) -> None:
         """Generate plots for key metrics"""
@@ -73,6 +79,9 @@ class CpGPlotter:
         }
         
         x = np.arange(len(df))
+        
+        # Add sample count to plot titles
+        sample_count = len(df)
         
         for metric, (hap1_col, hap2_col, title) in metrics.items():
             if hap1_col not in df.columns or hap2_col not in df.columns:
@@ -100,10 +109,10 @@ class CpGPlotter:
                    color='red', va='center', ha='left',
                    bbox=dict(facecolor='white', edgecolor='none', alpha=0.7))
             
-            # Set labels and title
+            # Set labels and title (now including sample count)
             ax.set_xlabel('Sample ID', fontsize=10)
             ax.set_ylabel('Count of Sites', fontsize=10)
-            ax.set_title(title, fontsize=12, pad=20)
+            ax.set_title(f'{title}\n(n={sample_count} samples)', fontsize=12, pad=20)
             
             # Set x-axis ticks
             ax.set_xticks(x)
