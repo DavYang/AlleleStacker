@@ -1,145 +1,312 @@
 import os
 import sys
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
-from matplotlib.ticker import ScalarFormatter, FormatStrFormatter
+from matplotlib.ticker import ScalarFormatter
+import logging
+from pathlib import Path
 
-# Check if correct number of arguments is provided
-if len(sys.argv) != 2:
-    print("Usage: python methylation_analysis.py <sample_name>")
-    print("Example: python methylation_analysis.py SPM180")
-    sys.exit(1)
+# Set up logging
+logging.basicConfig(level=logging.INFO, 
+                   format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Get sample name from command line arguments
-sample_name = sys.argv[1]
-
-# Files are in current directory
-current_dir = os.getcwd()
-
-# Define the names of input files based on your structure
-hap1_file = f"{sample_name}.hap1.meth_regions.bed"
-hap2_file = f"{sample_name}.hap2.meth_regions.bed"
-
-# Define colors for visualization - red for methylated, blue for unmethylated
-color_map = {
-    'Hap1-M': '#FF0000',  # Red
-    'Hap1-U': '#0000FF',  # Blue
-    'Hap2-M': '#FF6666',  # Light red
-    'Hap2-U': '#6666FF'   # Light blue
+# Constants
+PLOT_STYLE = {
+    'colors': {
+        'Hap1-M': '#FF0000',
+        'Hap1-U': '#0000FF',
+        'Hap2-M': '#FF6666',
+        'Hap2-U': '#6666FF'
+    },
+    'fontsize': {
+        'title': 20,
+        'label': 15,
+        'tick': 13
+    }
 }
+CATEGORIES = ['Hap1-M', 'Hap1-U', 'Hap2-M', 'Hap2-U']
 
-# Define the order of categories for consistent plotting
-category_order = ['Hap1-M', 'Hap1-U', 'Hap2-M', 'Hap2-U']
+def setup_directories(input_dir, output_dir):
+    """Set up input and output directories"""
+    dirs = {
+        'sample': Path(output_dir) / "per_sample_analysis",
+        'cross': Path(output_dir) / "cross_sample_analysis"
+    }
+    
+    if not Path(input_dir).is_dir():
+        raise ValueError(f"Input directory not found: {input_dir}")
+    
+    for dir_path in dirs.values():
+        dir_path.mkdir(parents=True, exist_ok=True)
+    
+    return dirs
 
-# Define font sizes
-TITLE_FONT_SIZE = 20
-AXIS_LABEL_FONT_SIZE = 15
-TICK_LABEL_FONT_SIZE = 13
-
-def set_scientific_notation(ax):
-    formatter = ScalarFormatter(useMathText=True)
-    formatter.set_scientific(True)
-    formatter.set_powerlimits((-1, 1))
-    ax.yaxis.set_major_formatter(formatter)
-    ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    ax.yaxis.set_major_formatter(FormatStrFormatter('%.1e'))
-
-def read_and_process_file(file_path, haplotype):
-    """Read and process a single methylation regions file"""
-    if not os.path.exists(file_path):
-        print(f"Error: File not found: {file_path}")
+def read_methylation_file(file_path, haplotype):
+    """Read and process methylation data file"""
+    try:
+        df = pd.read_csv(file_path, 
+                        sep='\t',
+                        comment='#',
+                        names=['chrom', 'start', 'end', 'summary_label'],
+                        usecols=['start', 'end', 'summary_label'])
+        
+        df['size'] = df['end'] - df['start']
+        df['category'] = f"{haplotype}-" + df['summary_label']
+        return df[['size', 'category']]  # Keep only needed columns
+        
+    except Exception as e:
+        logging.error(f"Error reading {file_path}: {e}")
         return None
-    
-    df = pd.read_csv(file_path, sep='\t', comment='#')
-    df['size'] = df['end'] - df['start']
-    # Add haplotype-specific labels
-    df['category'] = df['summary_label'].apply(lambda x: f"{haplotype}-{x}")
-    return df
 
-def create_plots(combined_df, sample_name):
-    """Create plots for methylation status across haplotypes"""
-    
-    # Plot 1: Region Counts by Methylation Status and Haplotype
+def create_distribution_plot(data, category, sample_name, output_path):
+    """Create size distribution plot for a category"""
     fig, ax = plt.subplots(figsize=(12, 6))
     
-    # Count regions for each category
-    counts = combined_df['category'].value_counts().reindex(category_order).fillna(0)
+    # Calculate bin edges in log space
+    bins = np.logspace(np.log10(data['size'].min()), np.log10(data['size'].max()), 50)
     
-    sns.barplot(x=counts.index, y=counts.values, palette=[color_map[cat] for cat in category_order], ax=ax)
-    plt.title(f'Methylation Region Counts for {sample_name}', fontsize=TITLE_FONT_SIZE)
-    plt.xlabel('Category', fontsize=AXIS_LABEL_FONT_SIZE)
-    plt.ylabel('Count', fontsize=AXIS_LABEL_FONT_SIZE)
-    plt.xticks(rotation=45, fontsize=TICK_LABEL_FONT_SIZE)
-    plt.yticks(fontsize=TICK_LABEL_FONT_SIZE)
+    for i, cat in enumerate(data['category'].unique()):
+        subset = data[data['category'] == cat]
+        # Create step histogram with filled area
+        counts, edges = np.histogram(subset['size'], bins=bins)
+        plt.stairs(counts, edges, 
+                  label=cat,
+                  color=PLOT_STYLE['colors'][cat],
+                  alpha=0.3,  # Fill transparency
+                  fill=True)
+        # Add line on top for better visibility
+        plt.stairs(counts, edges,
+                  color=PLOT_STYLE['colors'][cat],
+                  linewidth=2,
+                  alpha=1.0,
+                  linestyle=['-', '--'][i])  # Different line styles for each haplotype
     
-    set_scientific_notation(ax)
-    ax.yaxis.set_label_coords(-0.1, 0.5)
+    plt.title(f'{category} Region Size Distribution - {sample_name}', 
+              fontsize=PLOT_STYLE['fontsize']['title'])
+    plt.xlabel('Region Size (bp)', fontsize=PLOT_STYLE['fontsize']['label'])
+    plt.ylabel('Count', fontsize=PLOT_STYLE['fontsize']['label'])
+    plt.xticks(fontsize=PLOT_STYLE['fontsize']['tick'])
+    plt.yticks(fontsize=PLOT_STYLE['fontsize']['tick'])
     
-    plt.savefig(f'{sample_name}_methylation_counts.png', bbox_inches='tight')
+    # Set log scales
+    plt.xscale('log')
+    plt.yscale('log')
+    
+    # Improve grid
+    plt.grid(True, which="major", ls="-", alpha=0.2)
+    plt.grid(True, which="minor", ls=":", alpha=0.1)
+    
+    # Improve legend
+    plt.legend(frameon=True, framealpha=1.0, loc='upper right')
+    
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close()
+
+def create_sample_plots(df, sample_name, output_dir):
+    """Create all sample-specific plots"""
+    # Count plot
+    fig, ax = plt.subplots(figsize=(10, 6))
+    counts = df['category'].value_counts().reindex(CATEGORIES, fill_value=0)
     
-    # Plot 2: Region Sizes by Methylation Status and Haplotype
-    fig, ax = plt.subplots(figsize=(12, 6))
+    bars = ax.bar(range(len(CATEGORIES)), counts.values, 
+                 color=[PLOT_STYLE['colors'][cat] for cat in CATEGORIES])
+    
+    ax.set_title(f'Methylation Region Counts - {sample_name}', 
+                 fontsize=PLOT_STYLE['fontsize']['title'])
+    ax.set_xlabel('Category', fontsize=PLOT_STYLE['fontsize']['label'])
+    ax.set_ylabel('Count', fontsize=PLOT_STYLE['fontsize']['label'])
+    ax.set_xticks(range(len(CATEGORIES)))
+    ax.set_xticklabels(CATEGORIES, rotation=45, ha='right',
+                       fontsize=PLOT_STYLE['fontsize']['tick'])
+    plt.tight_layout()
+    plt.savefig(output_dir / f'{sample_name}_counts.png', dpi=300)
+    plt.close()
+
+    # Size distribution plots
+    for status in ['M', 'U']:
+        subset = df[df['category'].str.contains(status)]
+        create_distribution_plot(
+            subset, 
+            'Methylated' if status == 'M' else 'Unmethylated',
+            sample_name,
+            output_dir / f'{sample_name}_{status}_size_dist.png'
+        )
+
+def update_cross_sample_data(df, sample_name, cross_dir):
+    """Update cross-sample summary data"""
+    summary = {}
     
     # Calculate statistics for each category
-    size_stats = combined_df.groupby('category')['size'].agg(['mean', 'std']).reindex(category_order)
+    for hap in ['Hap1', 'Hap2']:
+        for status in ['M', 'U']:
+            cat = f"{hap}-{status}"
+            # Create a separate DataFrame to avoid indexing issues
+            subset = df[['size', 'category']].loc[df['category'] == cat].copy()
+            summary.update({
+                f"{hap}_{status}_count": len(subset),
+                f"{hap}_{status}_mean_size": subset['size'].mean() if len(subset) > 0 else 0,
+                f"{hap}_{status}_std_size": subset['size'].std() if len(subset) > 0 else 0
+            })
     
-    # Create bar plot with error bars
-    sns.barplot(x=size_stats.index, y=size_stats['mean'], 
-               palette=[color_map[cat] for cat in category_order], ax=ax)
-    plt.errorbar(x=range(len(size_stats)), y=size_stats['mean'], 
-                yerr=size_stats['std'], fmt='none', color='black', capsize=5)
+    # Update or create summary file
+    summary_file = cross_dir / "all_samples_summary.csv"
+    summary_df = pd.DataFrame([summary], index=[sample_name])
     
-    plt.title(f'Average Region Sizes for {sample_name}', fontsize=TITLE_FONT_SIZE)
-    plt.xlabel('Category', fontsize=AXIS_LABEL_FONT_SIZE)
-    plt.ylabel('Average Size (bp)', fontsize=AXIS_LABEL_FONT_SIZE)
-    plt.xticks(rotation=45, fontsize=TICK_LABEL_FONT_SIZE)
-    plt.yticks(fontsize=TICK_LABEL_FONT_SIZE)
+    if summary_file.exists():
+        existing = pd.read_csv(summary_file, index_col=0)
+        # Handle duplicates by keeping the latest version
+        updated = pd.concat([existing, summary_df])
+        updated = updated[~updated.index.duplicated(keep='last')]
+        updated.to_csv(summary_file)
+    else:
+        summary_df.to_csv(summary_file)
     
-    set_scientific_notation(ax)
-    ax.yaxis.set_label_coords(-0.1, 0.5)
+    return summary_file
+
+def create_cross_sample_plots(summary_file, output_dir):
+    """Create comparison plots across all samples"""
+    if not summary_file.exists():
+        return
+        
+    df = pd.read_csv(summary_file, index_col=0)
+    if len(df) <= 1:
+        return
     
-    plt.savefig(f'{sample_name}_region_sizes.png', bbox_inches='tight')
+    # Sort index to ensure consistent sample ordering
+    df = df.sort_index()
+    x = np.arange(len(df.index))
+    width = 0.35
+    
+    # Create plots for different metrics
+    metrics = [
+        ('methylated_counts', ['Hap1_M_count', 'Hap2_M_count'], 
+         'Methylated Regions Count', ['#FF0000', '#FF6666']),
+        ('unmethylated_counts', ['Hap1_U_count', 'Hap2_U_count'],
+         'Unmethylated Regions Count', ['#0000FF', '#6666FF'])
+    ]
+    
+    # Plot counts
+    for fname, cols, title, colors in metrics:
+        fig, ax = plt.subplots(figsize=(12, 6))
+        
+        bar1 = ax.bar(x - width/2, df[cols[0]], width, label='Hap1', color=colors[0])
+        bar2 = ax.bar(x + width/2, df[cols[1]], width, label='Hap2', color=colors[1])
+        
+        ax.set_title(title, fontsize=PLOT_STYLE['fontsize']['title'])
+        ax.set_xlabel('Sample', fontsize=PLOT_STYLE['fontsize']['label'])
+        ax.set_ylabel('Count', fontsize=PLOT_STYLE['fontsize']['label'])
+        ax.set_xticks(x)
+        ax.set_xticklabels(df.index, rotation=45, ha='right', 
+                          fontsize=PLOT_STYLE['fontsize']['tick'])
+        ax.legend()
+        plt.grid(True, alpha=0.2)
+        plt.tight_layout()
+        
+        plt.savefig(output_dir / f'cross_sample_{fname}.png', dpi=300)
+        plt.close()
+    
+    # Create violin plots for sizes
+    size_data = []
+    for hap in ['Hap1', 'Hap2']:
+        mean_col = f'{hap}_M_mean_size'
+        std_col = f'{hap}_M_std_size'
+        count_col = f'{hap}_M_count'
+        
+        # Generate points based on mean and std
+        for idx, row in df.iterrows():
+            size_data.append({
+                'Sample': idx,
+                'Haplotype': hap,
+                'Size': row[mean_col],
+                'Std': row[std_col],
+                'Count': row[count_col]
+            })
+    
+    size_df = pd.DataFrame(size_data)
+    
+    # Create violin plot
+    fig, ax = plt.subplots(figsize=(12, 6))
+    
+    # Plot violin plot with individual points
+    parts = ax.violinplot([group['Size'].values for name, group in size_df.groupby('Sample')],
+                         showmeans=True, showmedians=True)
+    
+    # Customize violin plot
+    for pc in parts['bodies']:
+        pc.set_facecolor('#FF9999')
+        pc.set_alpha(0.6)
+    parts['cmeans'].set_color('black')
+    parts['cmedians'].set_color('red')
+    
+    ax.set_title('Methylated Region Size Distribution Across Samples', 
+                fontsize=PLOT_STYLE['fontsize']['title'])
+    ax.set_xlabel('Sample', fontsize=PLOT_STYLE['fontsize']['label'])
+    ax.set_ylabel('Size (bp)', fontsize=PLOT_STYLE['fontsize']['label'])
+    ax.set_xticks(np.arange(1, len(df.index) + 1))
+    ax.set_xticklabels(df.index, rotation=45, ha='right', 
+                       fontsize=PLOT_STYLE['fontsize']['tick'])
+    
+    plt.grid(True, alpha=0.2)
+    plt.tight_layout()
+    plt.savefig(output_dir / 'cross_sample_size_distribution.png', dpi=300)
     plt.close()
 
-def print_summary_statistics(combined_df):
-    """Print summary statistics for all categories"""
-    print("\nSummary Statistics:")
+def process_sample(sample_name, input_dir, output_dirs):
+    """Process a single sample's data"""
+    sample_dir = Path(input_dir) / sample_name
     
-    # Count statistics
-    counts = combined_df['category'].value_counts().reindex(category_order).fillna(0)
-    print("\nRegion Counts:")
-    for category in category_order:
-        print(f"{category}: {counts[category]:.0f} regions")
+    # Read data
+    dfs = []
+    for hap in ['hap1', 'hap2']:
+        file_path = sample_dir / f"{sample_name}.{hap}.meth_regions.bed"
+        df = read_methylation_file(file_path, f"Hap{hap[-1]}")
+        if df is not None:
+            dfs.append(df)
     
-    # Size statistics
-    size_stats = combined_df.groupby('category')['size'].agg(['mean', 'std']).reindex(category_order)
-    print("\nRegion Sizes:")
-    for category in category_order:
-        if category in size_stats.index:
-            mean = size_stats.loc[category, 'mean']
-            std = size_stats.loc[category, 'std']
-            print(f"{category}: {mean:.2f} ± {std:.2f} bp")
+    if not dfs:
+        logging.error(f"No valid data found for {sample_name}")
+        return None
+        
+    combined_df = pd.concat(dfs)
+    
+    # Create plots
+    create_sample_plots(combined_df, sample_name, output_dirs['sample'])
+    
+    # Generate summary statistics for all categories
+    stats = pd.DataFrame(index=CATEGORIES)
+    group_stats = combined_df.groupby('category').agg({
+        'size': ['count', 'mean', 'std']
+    }).round(2)
+    stats = group_stats.reindex(CATEGORIES, fill_value=0)
+    
+    # Save summary
+    stats.to_csv(output_dirs['sample'] / f'{sample_name}_stats.txt')
+    
+    logging.info(f"Sample processing complete: {sample_name}")
+    return combined_df
 
-# Main execution
 def main():
-    # Read and process both files
-    hap1_df = read_and_process_file(hap1_file, "Hap1")
-    hap2_df = read_and_process_file(hap2_file, "Hap2")
-    
-    if hap1_df is None or hap2_df is None:
+    if len(sys.argv) != 4:
+        print("Usage: python script.py <input_dir> <output_dir> <sample_name>")
         sys.exit(1)
     
-    # Combine the dataframes
-    combined_df = pd.concat([hap1_df, hap2_df])
+    input_dir, output_dir, sample_name = sys.argv[1:4]
     
-    # Create the plots
-    create_plots(combined_df, sample_name)
-    print(f"Analysis complete for {sample_name}. Plots saved in current directory.")
-    
-    # Print summary statistics
-    print_summary_statistics(combined_df)
+    try:
+        output_dirs = setup_directories(input_dir, output_dir)
+        combined_df = process_sample(sample_name, input_dir, output_dirs)
+        
+        if combined_df is not None:
+            # Update cross-sample data and create plots
+            summary_file = update_cross_sample_data(combined_df, sample_name, output_dirs['cross'])
+            create_cross_sample_plots(summary_file, output_dirs['cross'])
+            logging.info(f"Analysis complete for {sample_name}")
+        
+    except Exception as e:
+        logging.error(f"Analysis failed: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
