@@ -1,3 +1,9 @@
+### Date: 1/7/2024
+
+- Consolidated EDA plotting with the main execution notebook.
+- A-B test of results of CpG pileup QC.
+
+
 ### Date: 12/12/24
 Added CpG pileup QC and reworked scripts up until consensus region filtering.
 
