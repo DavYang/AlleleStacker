@@ -43,11 +43,17 @@ class VariantCounts:
     
     @property
     def methylated_ratio(self) -> float:
-        return self.methylated_with_var / self.methylated_total if self.methylated_total > 0 else 0
+        try:
+            return self.methylated_with_var / self.methylated_total if self.methylated_total > 0 else 0.0
+        except ZeroDivisionError:
+            return 0.0
     
     @property
     def unmethylated_ratio(self) -> float:
-        return self.unmethylated_with_var / self.unmethylated_total if self.unmethylated_total > 0 else 0
+        try:
+            return self.unmethylated_with_var / self.unmethylated_total if self.unmethylated_total > 0 else 0.0
+        except ZeroDivisionError:
+            return 0.0
 
 class VariantMethylationMapper:
     def __init__(self, output_prefix: str, haplotype: str, max_workers: Optional[int] = None):
@@ -284,7 +290,10 @@ class VariantMethylationMapper:
             return "Low (few samples)"
             
         with_data = counts.methylated_with_var + counts.unmethylated_with_var
-        data_ratio = with_data / total_with_var
+        try:
+            data_ratio = with_data / total_with_var if total_with_var > 0 else 0.0
+        except ZeroDivisionError:
+            return "Low (no data)"
         
         # Using constants for thresholds
         HIGH_CONFIDENCE = 0.8
