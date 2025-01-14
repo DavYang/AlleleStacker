@@ -14,25 +14,29 @@
 # Exit on error
 set -e
 
-# Set paths
-VARIANT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/merged_variants"
-PYTHON_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/python"
-OUTPUT_DIR="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-20-24/outputs/variant_mapping"
-
-
 # Load conda environment
 source /public/apps/conda3/etc/profile.d/conda.sh
 conda activate anc_vig
 
-# Map array task to haplotype
+# Get input parameters
 if [[ ${SLURM_ARRAY_TASK_ID} == 1 ]]; then
     HAP="H1"
-    BED_FILE="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-19-24/outputs/filtered_consensus_regions/min_sample-1/filtered_consensus_H1.bed"
 else
     HAP="H2"
-    BED_FILE="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker_11-19-24/outputs/filtered_consensus_regions/min_sample-1/filtered_consensus_H2.bed"
 fi
 
+# Get input directories from command line arguments
+if [[ $# -lt 4 ]]; then
+    echo "Usage: $0 <bed_dir> <variant_dir> <python_dir> <output_dir>"
+    exit 1
+fi
+
+BED_DIR=$1
+VARIANT_DIR=$2
+PYTHON_DIR=$3
+OUTPUT_DIR=$4
+
+BED_FILE="${BED_DIR}/filtered_candidate_${HAP}.bed"
 
 # Create timestamped output directory
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
@@ -47,7 +51,6 @@ echo "Output directory: $RUN_DIR"
 echo "Using $(nproc) CPU cores"
 echo "Memory limit: 64GB"
 
-
 if [[ ! -f "$BED_FILE" ]]; then
     echo "Error: BED file not found: $BED_FILE"
     exit 1
@@ -55,14 +58,15 @@ fi
 
 # Run variant mapping
 echo "Running variant mapping for ${HAP}..."
-python3 "${PYTHON_DIR}/test_map2.py" \
+python3 "${PYTHON_DIR}/testmap_1-13.py" \
     --bed "$BED_FILE" \
     --haplotype "$HAP" \
     --output-prefix "${RUN_DIR}/${HAP}" \
     --small-vcf "${VARIANT_DIR}/small_variants/merged_phased_small_GRCh38.deepvariant.qc.vcf.gz" \
     --cnv-vcf "${VARIANT_DIR}/copy_number_variants/merged_CNVs_GRCh38.qc.vcf.gz" \
     --sv-vcf "${VARIANT_DIR}/structural_variants/merged_phased_SVs_GRCh38.qc.vcf.gz" \
-     --threads ${SLURM_CPUS_PER_TASK}
+    --tr-vcf "${VARIANT_DIR}/tandem_repeats/merged_TRs_GRCh38.qc.vcf.gz" \
+    --threads ${SLURM_CPUS_PER_TASK}
 
 # Check exit status
 if [[ $? -ne 0 ]]; then
@@ -81,13 +85,16 @@ echo "Generating summary report..."
     echo "Haplotype: ${HAP}"
     echo ""
     echo "Results:"
-    echo "  Output file: ${RUN_DIR}/${HAP}_variants.tsv"
-    echo "  Total variants: $(( $(wc -l < "${RUN_DIR}/${HAP}_variants.tsv") - 1 ))"
+    echo "  Methylated variants output file: ${RUN_DIR}/${HAP}_methylated_variants.tsv"
+    echo "  Unmethylated variants output file: ${RUN_DIR}/${HAP}_unmethylated_variants.tsv"
+    echo "  Rare variants output file: ${RUN_DIR}/${HAP}_rare_variants.tsv"
     echo ""
     echo "Variant counts by type:"
     echo "----------------------"
     for type in small cnv sv tr; do
-        count=$(grep -c "^.*\t${type}\t" "${RUN_DIR}/${HAP}_variants.tsv" || true)
+        count=$(grep -c "^.*\t${type}\t" "${RUN_DIR}/${HAP}_methylated_variants.tsv" || true)
+        count=$((count + $(grep -c "^.*\t${type}\t" "${RUN_DIR}/${HAP}_unmethylated_variants.tsv" || true)))
+        count=$((count + $(grep -c "^.*\t${type}\t" "${RUN_DIR}/${HAP}_rare_variants.tsv" || true)))
         printf "%-6s: %8d\n" "$type" "$count"
     done
     echo ""
@@ -102,7 +109,9 @@ echo "Summary report written to: ${RUN_DIR}/${HAP}_summary.txt"
 # Compress results
 echo "Compressing results..."
 tar -czf "${RUN_DIR}/${HAP}_results.tar.gz" \
-    "${RUN_DIR}/${HAP}_variants.tsv" \
+    "${RUN_DIR}/${HAP}_methylated_variants.tsv" \
+    "${RUN_DIR}/${HAP}_unmethylated_variants.tsv" \
+    "${RUN_DIR}/${HAP}_rare_variants.tsv" \
     "${RUN_DIR}/${HAP}_summary.txt" \
     "${RUN_DIR}/${HAP}.log"
 

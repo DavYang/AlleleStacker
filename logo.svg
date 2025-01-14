@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400">
+  <!-- Background -->
+  <rect width="500" height="400" fill="#ffffff"/>
+  
+  <!-- Stacked Alleles Representation -->
+  <g transform="translate(112, 80)">  <!-- 112 = 250 - (276/2) -->
+    <!-- Middle layer - Red without variants -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="276" height="34.5" rx="5.52" fill="#e63946"/>
+    </g>
+    
+    <!-- Bottom layer - Red without variants -->
+    <g transform="translate(0, 48.3)">
+      <rect x="0" y="0" width="276" height="34.5" rx="5.52" fill="#e63946"/>
+    </g>
+    
+    <!-- Top layer - Blue with variants -->
+    <g transform="translate(0, 96.6)">
+      <rect x="0" y="0" width="276" height="34.5" rx="5.52" fill="#2b7bba"/>
+      <!-- Variants in top layer -->
+      <rect x="55.2" y="0" width="15" height="34.5" fill="#1a5c8f"/>
+      <rect x="165.6" y="0" width="10" height="34.5" fill="#1a5c8f"/>
+      <rect x="220.8" y="0" width="20" height="34.5" fill="#1a5c8f"/>
+    </g>
+  </g>
+  
+  <!-- Text -->
+  <text x="250" y="280" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle">
+    <tspan fill="#e63946">Allele</tspan><tspan fill="#2b7bba">Stacker</tspan>
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="250" y="320" font-family="Arial, sans-serif" font-size="20" text-anchor="middle" fill="#666">
+    DNA methylation and functional non-coding variant 
+  </text>
+  <text x="250" y="345" font-family="Arial, sans-serif" font-size="20" text-anchor="middle" fill="#666">
+    analysis tools for long-read sequencing
+  </text>
+</svg>
