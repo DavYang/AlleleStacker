@@ -4,8 +4,8 @@
 #SBATCH --mem=64gb
 #SBATCH --time=2-00:00:00
 #SBATCH --job-name=var_map
-#SBATCH --output=var_map_%A_%a.out
-#SBATCH --error=var_map_%A_%a.err
+#SBATCH --output=logs/var_map_%A_%a.out
+#SBATCH --error=logs/var_map_%A_%a.err
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=david.yang2@einsteinmed.edu
 #SBATCH --cpus-per-task=20
@@ -42,7 +42,7 @@ BED_FILE="${BED_DIR}/filtered_candidate_${HAP}.bed"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 RUN_DIR="${OUTPUT_DIR}/run_${TIMESTAMP}"
 mkdir -p "$RUN_DIR"
-
+mkdir -p "logs"
 # Start logging
 exec 1> >(tee "${RUN_DIR}/${HAP}.log") 2>&1
 

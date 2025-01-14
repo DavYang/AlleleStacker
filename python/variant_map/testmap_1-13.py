@@ -6,11 +6,12 @@ Comprehensive pipeline to:
 1. Map variants across methylation regions
 2. Score and prioritize variants based on methylation associations
 """
+import os
+import sys
 import argparse
 import subprocess
 import pandas as pd
 import numpy as np
-import os
 import logging
 from typing import Dict, List, Set, Optional, Tuple
 from collections import defaultdict
