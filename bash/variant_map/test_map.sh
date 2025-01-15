@@ -6,8 +6,6 @@
 #SBATCH --job-name=var_map
 #SBATCH --output=logs/var_map_%A_%a.out
 #SBATCH --error=logs/var_map_%A_%a.err
-#SBATCH --mail-type=END,FAIL
-#SBATCH --mail-user=david.yang2@einsteinmed.edu
 #SBATCH --cpus-per-task=20
 #SBATCH --array=1,2
 
@@ -59,7 +57,7 @@ fi
 
 # Run variant mapping
 echo "Running variant mapping for ${HAP}..."
-python3 "${PYTHON_DIR}/variant_mapper-2.py" \
+python3 "${PYTHON_DIR}/variant_mapper-3.py" \
     --bed "$BED_FILE" \
     --haplotype "$HAP" \
     --output-prefix "${RUN_DIR}/${HAP}" \
@@ -76,58 +74,3 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "Completed variant mapping for ${HAP} at $(date)"
-
-# Create summary report
-echo "Generating summary report..."
-SCORED_VARIANTS="${RUN_DIR}/${HAP}_${HAP}_scored_variants.tsv"
-
-{
-    echo "Variant Mapping Run Summary"
-    echo "=========================="
-    echo "Run timestamp: ${TIMESTAMP}"
-    echo "Haplotype: ${HAP}"
-    echo ""
-    echo "Results:"
-    echo "Output file: ${SCORED_VARIANTS}"
-    
-    if [[ -f "$SCORED_VARIANTS" ]]; then
-        total_variants=$(($(wc -l < "$SCORED_VARIANTS") - 1))
-        echo "Total variants: ${total_variants}"
-        
-        echo -e "\nVariant counts by type:"
-        echo "----------------------"
-        for type in small cnv sv tr; do
-            # Use grep with -c and handle the output safely
-            count=$(grep -c "^.*\t${type}\t" "$SCORED_VARIANTS" 2>/dev/null || echo "0")
-            # Ensure count is a valid number
-            if ! [[ "$count" =~ ^[0-9]+$ ]]; then
-                count=0
-            fi
-            echo "${type}: ${count}"
-        done
-    else
-        echo "Warning: Results file not found"
-    fi
-
-    echo -e "\nResource Usage:"
-    echo "Runtime: $SECONDS seconds"
-    echo "Memory peak: $(free -h | awk '/Mem:/ {print $3}')"
-    echo "CPU usage: $(top -bn1 | grep "Cpu(s)" | awk '{print $2}')%"
-} > "${RUN_DIR}/${HAP}_summary.txt"
-
-echo "Summary report written to: ${RUN_DIR}/${HAP}_summary.txt"
-
-# Compress results if output exists
-if [[ -f "$SCORED_VARIANTS" ]]; then
-    echo "Compressing results..."
-    tar -czf "${RUN_DIR}/${HAP}_results.tar.gz" \
-        "${SCORED_VARIANTS}" \
-        "${RUN_DIR}/${HAP}_summary.txt" \
-        "${RUN_DIR}/${HAP}.log"
-    
-    echo "Results compressed to: ${RUN_DIR}/${HAP}_results.tar.gz"
-else
-    echo "Warning: No results file found to compress"
-fi
-
-echo "All done!"

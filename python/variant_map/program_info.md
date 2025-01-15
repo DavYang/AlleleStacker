@@ -3,7 +3,7 @@
 
 ## Purpose
 
-This script analyzes the association between genetic variants and methylation patterns in a set of samples. It takes as input a BED file defining genomic regions with methylation information and VCF files containing variant calls. The script maps variants to these regions, assesses their association with methylation status, and generates scored and prioritized output files.
+This script analyzes the association between genetic variants and methylation patterns in a set of samples. It takes as input a BED file defining genomic regions with methylation information and merged sample VCFs of various variant types. The script maps variants to these regions, assesses their association with methylation status, and generates scored and prioritized output files.
 
 ## Functions
 

@@ -1,22 +1,7 @@
 #!/usr/bin/env python3
 """
-variant_methylation_mapper.py
-
-Maps variants to methylation regions and scores methylation state associations.
-Handles all 9 possible methylation x variant states:
-
-States:
-- M+V+: Methylated with variant 
-- M-V+: Unmethylated with variant
-- M+V-: Methylated without variant
-- M-V-: Unmethylated without variant 
-- X(M)V+: No methylation data, has variant
-- X(M)V-: No methylation data, no variant
-- X(V)M+: No variant data, methylated
-- X(V)M-: No variant data, unmethylated 
-- X(M)X(V): No data for either
-
-Scoring prioritizes variants with clear methylation state associations.
+variant_methylation_mapper.py - Maps variants to methylation regions with overlap awareness
+Handles varied overlap patterns between methylation data and variant calls.
 """
 
 import argparse
@@ -38,74 +23,54 @@ from scipy.stats import fisher_exact
 
 # Constants for confidence thresholds
 HIGH_CONFIDENCE = 0.8
-MEDIUM_CONFIDENCE = 0.6  
+MEDIUM_CONFIDENCE = 0.6
 LOW_CONFIDENCE = 0.4
 
-# Scoring weights
-STATE_ENRICHMENT_WEIGHT = 0.5  # Weight for state-specific enrichment
-STATE_DEPLETION_WEIGHT = 0.3   # Weight for state-specific depletion
-SIGNIFICANCE_WEIGHT = 0.2      # Weight for statistical significance
+# Weights for scoring components (adjusted for unmethylation focus)
+WEIGHT_METH_ASSOCIATION = 0.6       # Higher weight for absence in methylated
+WEIGHT_UNMETH_EXCLUSIVITY = 0.4   # Lower weight for presence in unmethylated
+WEIGHT_P_VALUE = 0.1              # Weight for p-value
 
-@dataclass 
+
+@dataclass
 class VariantCounts:
-    """Track sample counts across all 9 methylation x variant states"""
-    # Total samples by methylation state
+    """Track sample counts and overlap patterns"""
     total_meth: int = 0
     total_unmeth: int = 0
     total_no_data: int = 0
-
-    # Samples with variant 
-    meth_with_var: int = 0      # M+V+
-    unmeth_with_var: int = 0    # M-V+
-    no_meth_with_var: int = 0   # X(M)V+
-
-    # Samples without variant
-    no_var_meth: int = 0        # M+V-
-    no_var_unmeth: int = 0      # M-V-
-    no_meth_no_var: int = 0     # X(M)V-  [9th state]
-    
-    # Special cases - incomplete data
-    no_var_data_meth: int = 0   # X(V)M+
-    no_var_data_unmeth: int = 0 # X(V)M-
-    no_data_both: int = 0       # X(M)X(V)
+    meth_with_var: int = 0
+    unmeth_with_var: int = 0
+    no_meth_with_var: int = 0
+    no_data_with_var: int = 0
+    no_var_meth: int = 0
+    no_var_unmeth: int = 0
+    no_data_both: int = 0
 
     @property
     def total_samples(self) -> int:
-        """Total number of samples across all states"""
         return (self.total_meth + self.total_unmeth + self.total_no_data +
-                self.no_meth_with_var + self.no_var_meth + self.no_var_unmeth +
-                self.no_meth_no_var + self.no_data_both)
+                self.no_meth_with_var + self.no_var_meth + self.no_var_unmeth + 
+                self.no_data_both)
 
     @property
     def total_with_variant(self) -> int:
-        """Samples with confirmed variant presence"""
-        return self.meth_with_var + self.unmeth_with_var + self.no_meth_with_var
+        return self.meth_with_var + self.unmeth_with_var + self.no_data_with_var
+
+    @property 
+    def total_methylated(self) -> int:
+        return self.total_meth + self.no_var_meth
 
     @property
-    def total_without_variant(self) -> int:
-        """Samples with confirmed variant absence"""
-        return self.no_var_meth + self.no_var_unmeth + self.no_meth_no_var
+    def total_unmethylated(self) -> int:
+        return self.total_unmeth + self.no_var_unmeth
 
-    def get_meth_enrichment(self) -> float:
-        """Calculate variant enrichment in methylated samples"""
-        if self.total_meth == 0:
-            return 0.0
-        meth_var_ratio = self.meth_with_var / self.total_meth
-        unmeth_var_ratio = self.unmeth_with_var / self.total_unmeth if self.total_unmeth > 0 else 0
-        return max(0, meth_var_ratio - unmeth_var_ratio)
+    def get_meth_ratio(self, include_no_variant_data: bool = False) -> float:
+        total_meth = self.total_methylated if include_no_variant_data else self.total_meth
+        return self.meth_with_var / total_meth if total_meth > 0 else 0.0
 
-    def get_unmeth_enrichment(self) -> float:
-        """Calculate variant enrichment in unmethylated samples"""
-        if self.total_unmeth == 0:
-            return 0.0
-        unmeth_var_ratio = self.unmeth_with_var / self.total_unmeth
-        meth_var_ratio = self.meth_with_var / self.total_meth if self.total_meth > 0 else 0
-        return max(0, unmeth_var_ratio - meth_var_ratio)
-
-    def get_data_coverage(self) -> float:
-        """Calculate fraction of samples with complete data"""
-        samples_with_data = self.total_meth + self.total_unmeth + self.no_meth_with_var + self.no_meth_no_var
-        return samples_with_data / self.total_samples if self.total_samples > 0 else 0.0
+    def get_unmeth_ratio(self, include_no_variant_data: bool = False) -> float:
+        total_unmeth = self.total_unmethylated if include_no_variant_data else self.total_unmeth
+        return self.unmeth_with_var / total_unmeth if total_unmeth > 0 else 0.0
 
 
 class VariantMethylationMapper:
@@ -130,16 +95,15 @@ class VariantMethylationMapper:
         )
         self.logger = logging.getLogger(__name__)
         
-        # Define phased vs unphased variant types
         self.phased_types = {
-            'small': True,  # SNPs/indels are phased
-            'cnv': False,   # CNVs are unphased
-            'sv': True,     # SVs are phased
-            'tr': False     # TRs are unphased
+            'small': True,
+            'cnv': False,
+            'sv': True,
+            'tr': False
         }
 
     def _normalize_sample_name(self, sample: str) -> str:
-        """Normalize sample name for consistent matching"""
+        """Normalize sample name with special case handling"""
         return sample.replace('-', '').replace('_', '')
 
     def _get_samples(self, sample_str: str) -> Set[str]:
@@ -169,7 +133,6 @@ class VariantMethylationMapper:
                             self.vcf_samples[vcf_type] = set(samples)
                             self.vcf_files[vcf_type] = path
                             
-                            # Build sample name mapping
                             for s in samples:
                                 normalized = self._normalize_sample_name(s)
                                 self.sample_map[s] = normalized
@@ -192,30 +155,26 @@ class VariantMethylationMapper:
 
     def process_variant(self, fields: List[str], vcf_type: str,
                        meth_samples: Set[str], unmeth_samples: Set[str]) -> Optional[Dict]:
-        """Process variant and classify samples into all 9 states"""
+        """Process variant with overlap tracking and scoring"""
         try:
             genotypes = dict(zip(self.vcf_samples[vcf_type], fields[9:]))
             
-            # Initialize counts and sample lists
             counts = VariantCounts(
                 total_meth=len(meth_samples),
                 total_unmeth=len(unmeth_samples),
                 total_no_data=len(self.vcf_samples[vcf_type] - meth_samples - unmeth_samples)
             )
 
-            # Sample lists for each state
             meth_vars: List[str] = []
             unmeth_vars: List[str] = []
             no_data_vars: List[str] = []
             no_meth_vars: List[str] = []
             no_var_meth_samples: List[str] = []
             no_var_unmeth_samples: List[str] = []
-            no_meth_no_var_samples: List[str] = []  # X(M)V- samples
             no_data_both_samples: List[str] = []
 
             for sample, gt_str in genotypes.items():
                 if gt_str in {'./.', '.|.'} or ':' not in gt_str:
-                    # No variant data
                     if sample in meth_samples:
                         no_var_meth_samples.append(sample)
                         counts.no_var_meth += 1
@@ -230,7 +189,6 @@ class VariantMethylationMapper:
                 gt = gt_str.split(':')[0]
                 has_variant = False
 
-                # Check genotype based on variant type
                 if self.phased_types[vcf_type] and '|' in gt:
                     try:
                         alleles = [int(a) for a in gt.split('|')]
@@ -243,7 +201,6 @@ class VariantMethylationMapper:
                     has_variant = any(int(a) > 0 for a in gt.replace('|', '/').split('/') 
                                     if a.isdigit())
 
-                # Classify sample into appropriate state
                 if has_variant:
                     if sample in meth_samples:
                         meth_vars.append(f"{sample}:{gt}")
@@ -256,42 +213,6 @@ class VariantMethylationMapper:
                         no_meth_vars.append(f"{sample}:{gt}")
                         counts.no_data_with_var += 1
                         counts.no_meth_with_var += 1
-                else:
-                    # No variant - track X(M)V- state
-                    if sample not in meth_samples and sample not in unmeth_samples:
-                        no_meth_no_var_samples.append(f"{sample}:{gt}")
-                        counts.no_meth_no_var += 1
-
-            # Calculate confidence based on data coverage
-            data_coverage = counts.get_data_coverage()
-            confidence_weight = (1.0 if data_coverage >= HIGH_CONFIDENCE else
-                               0.7 if data_coverage >= MEDIUM_CONFIDENCE else
-                               0.4 if data_coverage >= LOW_CONFIDENCE else 0.1)
-
-            # Calculate enrichment scores
-            meth_enrichment = counts.get_meth_enrichment()
-            unmeth_enrichment = counts.get_unmeth_enrichment()
-
-            # Calculate Fisher's exact test
-            table = [
-                [counts.meth_with_var, counts.total_meth - counts.meth_with_var],
-                [counts.unmeth_with_var, counts.total_unmeth - counts.unmeth_with_var]
-            ]
-            _, p_value = fisher_exact(table)
-            significance = -np.log10(p_value if p_value > 0 else 1e-10)
-
-            # Calculate methylation association scores
-            methylation_score = confidence_weight * (
-                STATE_ENRICHMENT_WEIGHT * meth_enrichment +
-                STATE_DEPLETION_WEIGHT * (1 - unmeth_enrichment) +
-                SIGNIFICANCE_WEIGHT * significance
-            )
-
-            unmethylation_score = confidence_weight * (
-                STATE_ENRICHMENT_WEIGHT * unmeth_enrichment +
-                STATE_DEPLETION_WEIGHT * (1 - meth_enrichment) +
-                SIGNIFICANCE_WEIGHT * significance
-            )
 
             # Get variant type
             if vcf_type == 'small':
@@ -300,6 +221,46 @@ class VariantMethylationMapper:
                            else 'insertion')
             else:
                 var_type = vcf_type
+
+            # Calculate metrics
+            data_coverage = ((counts.total_meth + counts.total_unmeth) / 
+                           (counts.total_samples - counts.no_data_both)
+                           if counts.total_samples > counts.no_data_both else 0.0)
+            
+            meth_ratio = counts.get_meth_ratio()
+            unmeth_ratio = counts.get_unmeth_ratio()
+
+            # Calculate Fisher's exact test
+            table = [
+                [counts.meth_with_var, counts.total_meth - counts.meth_with_var],
+                [counts.unmeth_with_var, counts.total_unmeth - counts.unmeth_with_var]
+            ]
+            odds_ratio, p_value = fisher_exact(table)
+
+            # Calculate confidence-weighted scores
+            if data_coverage >= HIGH_CONFIDENCE:
+                confidence_weight = 1.0
+            elif data_coverage >= MEDIUM_CONFIDENCE:
+                confidence_weight = 0.7
+            elif data_coverage >= LOW_CONFIDENCE:
+                confidence_weight = 0.4
+            else:
+                confidence_weight = 0.1
+
+            # Adjusted scoring to prioritize unmethylation exclusivity
+            methylation_score = (
+                confidence_weight * (
+                    WEIGHT_METH_ASSOCIATION * (1 - meth_ratio) +  # Prioritize absence in methylated
+                    WEIGHT_UNMETH_EXCLUSIVITY * unmeth_ratio       # Prioritize presence in unmethylated
+                ) - WEIGHT_P_VALUE * np.log10(p_value if p_value > 0 else 1e-10)
+            )
+
+            unmethylation_score = (
+                confidence_weight * (
+                    WEIGHT_METH_ASSOCIATION * meth_ratio +        # Prioritize presence in methylated
+                    WEIGHT_UNMETH_EXCLUSIVITY * (1 - unmeth_ratio)  # Prioritize absence in unmethylated
+                ) - WEIGHT_P_VALUE * np.log10(p_value if p_value > 0 else 1e-10)
+            )
 
             return {
                 'region': {
@@ -318,14 +279,13 @@ class VariantMethylationMapper:
                 'methylation_score': methylation_score,
                 'unmethylation_score': unmethylation_score,
                 'data_coverage': data_coverage,
-                'meth_enrichment': meth_enrichment,
-                'unmeth_enrichment': unmeth_enrichment,
+                'meth_ratio': meth_ratio,
+                'unmeth_ratio': unmeth_ratio,
                 'p_value': p_value,
                 'meth_samples': meth_vars,
                 'unmeth_samples': unmeth_vars,
                 'no_data_samples': no_data_vars,
                 'no_meth_samples': no_meth_vars,
-                'no_meth_no_var_samples': no_meth_no_var_samples,  # NEW: X(M)V- samples
                 'no_var_meth_samples': no_var_meth_samples,
                 'no_var_unmeth_samples': no_var_unmeth_samples,
                 'no_data_both_samples': no_data_both_samples
@@ -368,148 +328,18 @@ class VariantMethylationMapper:
             
         return results
 
-    def write_results(self, variants: List[Dict]) -> bool:
-        """Write methylation and unmethylation associated variants to separate files"""
+    def run_mapping(self, bed_path: str) -> List[Dict]:
+        """Map variants across regions"""
+        results: List[Dict] = []
+        
         try:
-            # Create output filenames
-            meth_file = self.output_prefix.parent / f"{self.output_prefix.stem}_methylated_variants.tsv"
-            unmeth_file = self.output_prefix.parent / f"{self.output_prefix.stem}_unmethylated_variants.tsv"
-
-            # Define common headers with all 9 states
-            headers = [
-                'chrom', 'start', 'end', 'type', 'ref', 'alt',
-                'methylation_score', 'unmethylation_score', 'p_value',
-                'M+V+', 'M-V+', 'M+V-', 'M-V-',
-                'X(M)V+', 'X(M)V-',  # Added X(M)V-
-                'X(V)M+', 'X(V)M-', 'X(M)X(V)',
-                'data_coverage', 'meth_enrichment', 'unmeth_enrichment',
-                'meth_samples', 'unmeth_samples', 'no_data_samples',
-                'no_meth_samples', 'no_meth_no_var_samples',
-                'no_var_meth_samples', 'no_var_unmeth_samples',
-                'no_data_both_samples'
-            ]
-
-            # Split variants by association
-            meth_variants = [v for v in variants if v['methylation_score'] > v['unmethylation_score']]
-            unmeth_variants = [v for v in variants if v['unmethylation_score'] >= v['methylation_score']]
-
-            # Sort by scores
-            meth_variants.sort(key=lambda x: (-x['methylation_score'], x['p_value']))
-            unmeth_variants.sort(key=lambda x: (-x['unmethylation_score'], x['p_value']))
-
-            # Write methylation-associated variants
-            with open(meth_file, 'w', newline='') as f:
-                writer = csv.writer(f, delimiter='\t')
-                writer.writerow(headers)
-                
-                for var in meth_variants:
-                    writer.writerow(self._format_variant_row(var))
-
-            # Write unmethylation-associated variants
-            with open(unmeth_file, 'w', newline='') as f:
-                writer = csv.writer(f, delimiter='\t')
-                writer.writerow(headers)
-                
-                for var in unmeth_variants:
-                    writer.writerow(self._format_variant_row(var))
-
-            # Write statistics summary
-            self._write_stats_summary(meth_variants, unmeth_variants)
-            
-            return True
-
-        except Exception as e:
-            self.logger.error(f"Error writing results: {str(e)}")
-            return False
-
-    def _format_variant_row(self, variant: Dict) -> List[str]:
-        """Format variant data for output"""
-        counts = variant['counts']
-        return [
-            str(variant['region']['chrom']),
-            str(variant['region']['start']),
-            str(variant['region']['end']),
-            str(variant['variant']['type']),
-            str(variant['variant']['ref']),
-            str(variant['variant']['alt']),
-            f"{variant['methylation_score']:.3f}",
-            f"{variant['unmethylation_score']:.3f}",
-            f"{variant['p_value']:.2e}",
-            self._format_ratio(counts.meth_with_var, counts.total_meth),
-            self._format_ratio(counts.unmeth_with_var, counts.total_unmeth),
-            self._format_ratio(counts.no_var_meth, counts.total_meth),
-            self._format_ratio(counts.no_var_unmeth, counts.total_unmeth),
-            self._format_ratio(counts.no_meth_with_var, counts.total_no_data),
-            self._format_ratio(counts.no_meth_no_var, counts.total_no_data),
-            self._format_ratio(counts.no_var_data_meth, counts.total_meth),
-            self._format_ratio(counts.no_var_data_unmeth, counts.total_unmeth),
-            self._format_ratio(counts.no_data_both, counts.total_samples),
-            f"{variant['data_coverage']:.3f}",
-            f"{variant['meth_enrichment']:.3f}",
-            f"{variant['unmeth_enrichment']:.3f}",
-            ','.join(variant['meth_samples']) or '.',
-            ','.join(variant['unmeth_samples']) or '.',
-            ','.join(variant['no_data_samples']) or '.',
-            ','.join(variant['no_meth_samples']) or '.',
-            ','.join(variant['no_meth_no_var_samples']) or '.',
-            ','.join(variant['no_var_meth_samples']) or '.',
-            ','.join(variant['no_var_unmeth_samples']) or '.',
-            ','.join(variant['no_data_both_samples']) or '.'
-        ]
-
-    def _write_stats_summary(self, meth_variants: List[Dict], unmeth_variants: List[Dict]):
-        """Write summary statistics"""
-        stats_file = self.output_prefix.parent / f"{self.output_prefix.stem}_stats.txt"
-        with open(stats_file, 'w') as f:
-            f.write(f"Variant Methylation Analysis Summary\n")
-            f.write("================================\n\n")
-            
-            f.write(f"Total variants processed: {len(meth_variants) + len(unmeth_variants)}\n")
-            f.write(f"Methylation-associated variants: {len(meth_variants)}\n")
-            f.write(f"Unmethylation-associated variants: {len(unmeth_variants)}\n\n")
-
-            # Write variant type breakdown
-            f.write("Variant Type Distribution:\n")
-            for vcf_type in self.vcf_files:
-                meth_count = sum(1 for v in meth_variants if v['variant']['type'] == vcf_type)
-                unmeth_count = sum(1 for v in unmeth_variants if v['variant']['type'] == vcf_type)
-                f.write(f"{vcf_type}:\n")
-                f.write(f"  Methylation-associated: {meth_count}\n")
-                f.write(f"  Unmethylation-associated: {unmeth_count}\n")
-
-            # Write score distribution
-            f.write("\nScore Distribution:\n")
-            meth_scores = [v['methylation_score'] for v in meth_variants]
-            unmeth_scores = [v['unmethylation_score'] for v in unmeth_variants]
-            
-            f.write("Methylation Scores:\n")
-            f.write(f"  Mean: {np.mean(meth_scores):.3f}\n")
-            f.write(f"  Median: {np.median(meth_scores):.3f}\n")
-            f.write(f"  Std: {np.std(meth_scores):.3f}\n")
-            
-            f.write("Unmethylation Scores:\n")
-            f.write(f"  Mean: {np.mean(unmeth_scores):.3f}\n")
-            f.write(f"  Median: {np.median(unmeth_scores):.3f}\n")
-            f.write(f"  Std: {np.std(unmeth_scores):.3f}\n")
-
-    def _format_ratio(self, numerator: int, denominator: int) -> str:
-        """Format ratio with percentage"""
-        if denominator == 0:
-            return "0/0 (0.0%)"
-        percentage = (numerator / denominator) * 100
-        return f"{numerator}/{denominator} ({percentage:.1f}%)"
-
-    def run(self, bed_path: str) -> bool:
-        """Run complete variant mapping pipeline"""
-        try:
-            self.logger.info(f"Processing BED file: {bed_path}")
             df = pd.read_csv(bed_path, sep='\t')
-            
+            self.logger.info(f"Processing {len(df)} regions")
+
             with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
                 futures = [executor.submit(self.process_region, region) 
                           for _, region in df.iterrows()]
                 
-                results = []
                 with tqdm(total=len(futures), desc="Processing regions") as pbar:
                     for future in futures:
                         try:
@@ -520,11 +350,153 @@ class VariantMethylationMapper:
                             self.logger.error(f"Error processing region: {str(e)}")
                             pbar.update(1)
 
-            if not results:
+            self.logger.info(f"Found {len(results)} variants")
+            
+        except Exception as e:
+            self.logger.error(f"Error in mapping: {str(e)}")
+            
+        return results
+
+    def write_results(self, variants: List[Dict]) -> bool:
+        """Write results with methylation scores and patterns into separate files"""
+        try:
+            # Split variants by haplotype
+            hap_variants = [v for v in variants if self.haplotype in ('H1', 'H2')]
+            
+            # Create output filenames
+            meth_file = self.output_prefix.parent / f"{self.output_prefix.stem}_methylated_variants.tsv"
+            unmeth_file = self.output_prefix.parent / f"{self.output_prefix.stem}_unmethylated_variants.tsv"
+
+            # Define common headers
+            headers = [
+                'chrom', 'start', 'end', 'type', 'ref', 'alt',
+                'methylation_score', 'unmethylation_score', 'p_value',  # Include both scores and p-value
+                'M+V+', 'M-V+', 'M+V-', 'M-V-',
+                'X(M-)V+', 'X(V-)M+', 'X(V-)M-', 'X(M-)X(V-)',
+                'meth_samples', 'unmeth_samples', 'no_data_samples',
+                'no_meth_samples','no_var_meth_samples', 'no_var_unmeth_samples',
+                'no_data_both_samples'
+            ]
+
+            # Write methylation-associated variants
+            with open(meth_file, 'w', newline='') as f:
+                writer = csv.writer(f, delimiter='\t')
+                writer.writerow(headers)
+                
+                for var in hap_variants:  # No need to sort here, we'll sort later
+                    counts = var['counts']
+                    meth_ratio = var['meth_ratio']
+                    unmeth_ratio = var['unmeth_ratio']
+                    
+                    writer.writerow([
+                        str(var['region']['chrom']),
+                        str(var['region']['start']),
+                        str(var['region']['end']),
+                        str(var['variant']['type']),
+                        str(var['variant']['ref']),
+                        str(var['variant']['alt']),
+                         f"{var['unmethylation_score']:.3f}",  # Swap: Use unmethylation_score here
+                        f"{var['methylation_score']:.3f}",  # Swap: Use methylation_score here
+                        f"{var['p_value']:.2e}",
+                        f"{counts.meth_with_var}/{counts.total_meth} ({meth_ratio:.1%})",
+                        f"{counts.unmeth_with_var}/{counts.total_unmeth} ({unmeth_ratio:.1%})",
+                        f"{counts.total_meth - counts.meth_with_var}/{counts.total_meth} ({1-meth_ratio:.1%})",
+                        f"{counts.total_unmeth - counts.unmeth_with_var}/{counts.total_unmeth} ({1-unmeth_ratio:.1%})",
+                        self._format_ratio(counts.no_meth_with_var, counts.total_no_data),
+                        self._format_ratio(counts.no_var_meth, counts.total_methylated),
+                        self._format_ratio(counts.no_var_unmeth, counts.total_unmethylated),
+                        self._format_ratio(counts.no_data_both, counts.total_samples),
+                        ','.join(var['meth_samples']) or '.',
+                        ','.join(var['unmeth_samples']) or '.',
+                        ','.join(var['no_data_samples']) or '.',
+                        ','.join(var['no_meth_samples']) or '.',
+                        ','.join(var['no_var_meth_samples']) or '.',
+                        ','.join(var['no_var_unmeth_samples']) or '.',
+                        ','.join(var['no_data_both_samples']) or '.'
+                    ])
+
+            # Write unmethylation-associated variants (same as above, but using unmeth_file)
+            with open(unmeth_file, 'w', newline='') as f:
+                writer = csv.writer(f, delimiter='\t')
+                writer.writerow(headers)
+                
+                for var in hap_variants:  # No need to sort here
+                    counts = var['counts']
+                    meth_ratio = var['meth_ratio']
+                    unmeth_ratio = var['unmeth_ratio']
+                    
+                    writer.writerow([
+                        str(var['region']['chrom']),
+                        str(var['region']['start']),
+                        str(var['region']['end']),
+                        str(var['variant']['type']),
+                        str(var['variant']['ref']),
+                        str(var['variant']['alt']),
+                        f"{var['unmethylation_score']:.3f}",  # Swap: Use unmethylation_score here
+                        f"{var['methylation_score']:.3f}",  # Swap: Use methylation_score here
+                        f"{var['p_value']:.2e}",
+                        f"{counts.meth_with_var}/{counts.total_meth} ({meth_ratio:.1%})",
+                        f"{counts.unmeth_with_var}/{counts.total_unmeth} ({unmeth_ratio:.1%})",
+                        f"{counts.total_meth - counts.meth_with_var}/{counts.total_meth} ({1-meth_ratio:.1%})",
+                        f"{counts.total_unmeth - counts.unmeth_with_var}/{counts.total_unmeth} ({1-unmeth_ratio:.1%})",
+                        self._format_ratio(counts.no_meth_with_var, counts.total_no_data),
+                        self._format_ratio(counts.no_var_meth, counts.total_methylated),
+                        self._format_ratio(counts.no_var_unmeth, counts.total_unmethylated),
+                        self._format_ratio(counts.no_data_both, counts.total_samples),
+                        ','.join(var['meth_samples']) or '.',
+                        ','.join(var['unmeth_samples']) or '.',
+                        ','.join(var['no_data_samples']) or '.',
+                        ','.join(var['no_meth_samples']) or '.',
+                        ','.join(var['no_var_meth_samples']) or '.',
+                        ','.join(var['no_var_unmeth_samples']) or '.',
+                        ','.join(var['no_data_both_samples']) or '.'
+                    ])
+
+
+            # Write statistics summary
+            stats_file = self.output_prefix.parent / f"{self.output_prefix.stem}_stats.txt"
+            with open(stats_file, 'w') as f:
+                f.write("Variant Pattern Statistics\n")
+                f.write("=========================\n\n")
+                
+                f.write(f"Total variants processed: {len(hap_variants)}\n\n")
+                
+                for vcf_type, patterns in self.stats.items():
+                    f.write(f"\n{vcf_type.upper()} Variants:\n")
+                    f.write('-' * (len(vcf_type) + 10) + '\n')
+                    
+                    if 'total' in patterns:
+                        total = patterns['total']
+                        for pattern, count in patterns.items():
+                            if pattern != 'total':
+                                percentage = (count / total * 100) if total > 0 else 0
+                                f.write(f"{pattern:15} : {count:6d} ({percentage:5.1f}%)\n")
+
+            self.logger.info(f"Wrote {len(hap_variants)} methylation-associated variants to {meth_file}")
+            self.logger.info(f"Wrote {len(hap_variants)} unmethylation-associated variants to {unmeth_file}")
+            return True
+
+        except Exception as e:
+            self.logger.error(f"Error writing results: {str(e)}")
+            return False
+        
+    def _format_ratio(self, numerator: int, denominator: int) -> str:
+        """Format ratio with percentage"""
+        if denominator == 0:
+            return "0/0 (0.0%)"
+        return f"{numerator}/{denominator} ({numerator/denominator:.1%})"
+
+    def run(self, bed_path: str) -> bool:
+        """Run complete variant mapping pipeline"""
+        try:
+            # Map variants
+            variants = self.run_mapping(bed_path)
+            if not variants:
                 self.logger.error("No variants found")
                 return False
 
-            return self.write_results(results)
+            # Write results
+            return self.write_results(variants)
 
         except Exception as e:
             self.logger.error(f"Pipeline failed: {str(e)}")
@@ -533,7 +505,7 @@ class VariantMethylationMapper:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Map and score variants based on methylation state associations",
+        description='Map and score variants based on methylation patterns',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Example Usage:
@@ -601,3 +573,4 @@ Example Usage:
 
 if __name__ == '__main__':
     main()
+
