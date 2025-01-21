@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+  <!-- Background -->
+  <rect width="800" height="500" fill="#ffffff"/>
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial" font-size="24" text-anchor="middle" font-weight="bold">
+    9 States of Methylation and Variant Data
+  </text>
+
+  <!-- Legend -->
+  <g transform="translate(20, 80)">
+    <text x="0" y="0" font-family="Arial" font-size="14" font-weight="bold">Legend:</text>
+    <rect x="0" y="10" width="20" height="20" fill="#FF0000" opacity="0.7"/>
+    <text x="30" y="25" font-family="Arial" font-size="12">Methylated (M+)</text>
+    <rect x="150" y="10" width="20" height="20" fill="#0000FF" opacity="0.7"/>
+    <text x="180" y="25" font-family="Arial" font-size="12">Unmethylated (M-)</text>
+    <rect x="300" y="10" width="20" height="20" fill="#9E9E9E" opacity="0.7"/>
+    <text x="330" y="25" font-family="Arial" font-size="12">Missing Data (X)</text>
+  </g>
+
+  <!-- State Grid -->
+  <g transform="translate(100, 150)">
+    <!-- Row 1: Complete Data States -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="120" height="80" rx="10" fill="#FF0000" opacity="0.7"/>
+      <text x="60" y="30" font-family="Arial" font-size="16" text-anchor="middle" fill="white">M+V+</text>
+      <text x="60" y="50" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Methylated</text>
+      <text x="60" y="65" font-family="Arial" font-size="12" text-anchor="middle" fill="white">with variant</text>
+    </g>
+
+    <g transform="translate(200, 0)">
+      <rect x="0" y="0" width="120" height="80" rx="10" fill="#FF0000" opacity="0.7"/>
+      <text x="60" y="30" font-family="Arial" font-size="16" text-anchor="middle" fill="white">M+V-</text>
+      <text x="60" y="50" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Methylated</text>
+      <text x="60" y="65" font-family="Arial" font-size="12" text-anchor="middle" fill="white">no variant</text>
+    </g>
+
+    <g transform="translate(400, 0)">
+      <rect x="0" y="0" width="120" height="80" rx="10" fill="#0000FF" opacity="0.7"/>
+      <text x="60" y="30" font-family="Arial" font-size="16" text-anchor="middle" fill="white">M-V+</text>
+      <text x="60" y="50" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Unmethylated</text>
+      <text x="60" y="65" font-family="Arial" font-size="12" text-anchor="middle" fill="white">with variant</text>
+    </g>
+
+    <!-- Row 2: Partial Data States -->
+    <g transform="translate(0, 120)">
+      <rect x="0" y="0" width="120" height="80" rx="10" fill="#0000FF" opacity="0.7"/>
+      <text x="60" y="30" font-family="Arial" font-size="16" text-anchor="middle" fill="white">M-V-</text>
+      <text x="60" y="50" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Unmethylated</text>
+      <text x="60" y="65" font-family="Arial" font-size="12" text-anchor="middle" fill="white">no variant</text>
+    </g>
+
+    <g transform="translate(200, 120)">
+      <rect x="0" y="0" width="120" height="80" rx="10" fill="#9E9E9E" opacity="0.7"/>
+      <text x="60" y="30" font-family="Arial" font-size="16" text-anchor="middle" fill="white">X(M)V+</text>
+      <text x="60" y="50" font-family="Arial" font-size="12" text-anchor="middle" fill="white">No meth data</text>
+      <text x="60" y="65" font-family="Arial" font-size="12" text-anchor="middle" fill="white">has variant</text>
+    </g>
+
+    <g transform="translate(400, 120)">
+      <rect x="0" y="0" width="120" height="80" rx="10" fill="#9E9E9E" opacity="0.7"/>
+      <text x="60" y="30" font-family="Arial" font-size="16" text-anchor="middle" fill="white">X(M)V-</text>
+      <text x="60" y="50" font-family="Arial" font-size="12" text-anchor="middle" fill="white">No meth data</text>
+      <text x="60" y="65" font-family="Arial" font-size="12" text-anchor="middle" fill="white">no variant</text>
+    </g>
+
+    <!-- Row 3: Missing Data States -->
+    <g transform="translate(0, 240)">
+      <rect x="0" y="0" width="120" height="80" rx="10" fill="#9E9E9E" opacity="0.7"/>
+      <text x="60" y="30" font-family="Arial" font-size="16" text-anchor="middle" fill="white">X(V)M+</text>
+      <text x="60" y="50" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Methylated</text>
+      <text x="60" y="65" font-family="Arial" font-size="12" text-anchor="middle" fill="white">no var data</text>
+    </g>
+
+    <g transform="translate(200, 240)">
+      <rect x="0" y="0" width="120" height="80" rx="10" fill="#9E9E9E" opacity="0.7"/>
+      <text x="60" y="30" font-family="Arial" font-size="16" text-anchor="middle" fill="white">X(V)M-</text>
+      <text x="60" y="50" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Unmethylated</text>
+      <text x="60" y="65" font-family="Arial" font-size="12" text-anchor="middle" fill="white">no var data</text>
+    </g>
+
+    <g transform="translate(400, 240)">
+      <rect x="0" y="0" width="120" height="80" rx="10" fill="#9E9E9E" opacity="0.7"/>
+      <text x="60" y="30" font-family="Arial" font-size="16" text-anchor="middle" fill="white">X(M)X(V)</text>
+      <text x="60" y="50" font-family="Arial" font-size="12" text-anchor="middle" fill="white">No data for</text>
+      <text x="60" y="65" font-family="Arial" font-size="12" text-anchor="middle" fill="white">either</text>
+    </g>
+  </g>
+</svg>
