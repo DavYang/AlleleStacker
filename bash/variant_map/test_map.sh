@@ -57,7 +57,7 @@ fi
 
 # Run variant mapping
 echo "Running variant mapping for ${HAP}..."
-python3 "${PYTHON_DIR}/variant_mapper-3.py" \
+python3 "${PYTHON_DIR}/variant_mapper-4.py" \
     --bed "$BED_FILE" \
     --haplotype "$HAP" \
     --output-prefix "${RUN_DIR}/${HAP}" \
