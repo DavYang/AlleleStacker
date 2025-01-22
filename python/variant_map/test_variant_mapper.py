@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 from pathlib import Path
-from variant_mapper_4 import VariantMethylationMapper, VariantCounts
+from .variant_mapper_4 import VariantMethylationMapper, VariantCounts
 
 def test_normalize_sample_name():
     """Test sample name normalization"""
