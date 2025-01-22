@@ -8,10 +8,17 @@ PYTHON_DIR=$4
 
 # Check args
 if [ $# -ne 4 ]; then
-    echo "Usage: $0 SAMPLES_FILE CONFIG_FILE OUTPUT_DIR"
-    echo "Example: $0 samples.txt config.yaml /path/to/output"
+    echo "Usage: $0 SAMPLES_FILE CONFIG_FILE OUTPUT_DIR PYTHON_DIR"
+    echo "Example: $0 samples.txt config.yaml output_dir python/"
     exit 1
 fi
+
+# Convert to absolute paths
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SAMPLES_FILE="$(realpath "$1")"
+CONFIG_FILE="$(realpath "$2")"
+BASE_OUTPUT_DIR="$(realpath "$3")"
+PYTHON_DIR="$(realpath "$4")"
 
 # Verify inputs
 if [ ! -f "$SAMPLES_FILE" ]; then
@@ -59,7 +66,7 @@ parse_yaml() {
 eval $(parse_yaml "$CONFIG_FILE")
 
 # Validate required config values
-required_vars=("reference_fasta" "python" "vcf_base_dir" "bed_base_dir" "conda_analysis_env")
+required_vars=("reference_fasta" "vcf_base_dir" "bed_base_dir" "conda_analysis_env")
 for var in "${required_vars[@]}"; do
     if [ -z "${!var}" ]; then
         echo "Error: Required config variable $var is not set"
