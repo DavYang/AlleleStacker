@@ -9,8 +9,7 @@ vcf_base_dir: "/gs/gsfs0/users/greally-lab/David/6_base-seq_SC1/WGS-analysis/out
 bed_base_dir: "/gs/gsfs0/users/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/cpg_pileup_beds"
 
 # Pipeline settings (required)
-conda:
-  analysis_env: "anc_vig"  # Conda environment name
+conda_analysis_env: "anc_vig"  # Conda environment name
 
 # CpG filtering parameters (optional)
 filtering:
