@@ -202,19 +202,20 @@ def create_chromosome_distribution_plot(df, sample_name, output_path):
             category_data = df[df['category'] == category]
             logging.debug(f"Plotting {len(category_data)} regions for {category}")
             
-            # Convert chromosome positions to absolute positions
-            positions = []
-            for _, row in category_data.iterrows():
-                chrom_start = chrom_positions[row['chrom']][0]
-                region_pos = chrom_start + (row['start'] + row['end']) / 2
-                positions.append(region_pos)
-            
-            # Plot vertical lines using collections for efficiency
-            if positions:
-                segments = np.column_stack((
-                    np.column_stack((positions, np.zeros_like(positions))),
-                    np.column_stack((positions, np.ones_like(positions)))
-                )).reshape(-1, 2, 2)
+            # Vectorized position calculation
+            if not category_data.empty:
+                # Create mapping of chromosome to start position
+                chrom_starts = pd.Series({chrom: pos[0] for chrom, pos in chrom_positions.items()})
+                
+                # Vectorized calculation of absolute positions
+                positions = (chrom_starts[category_data['chrom']].values + 
+                           ((category_data['start'] + category_data['end']) / 2).values)
+                
+                # Create segments array directly
+                segments = np.zeros((len(positions), 2, 2))
+                segments[:, 0, 0] = positions  # x1
+                segments[:, 1, 0] = positions  # x2
+                segments[:, 1, 1] = 1          # y2 (y1 remains 0)
                 
                 lc = LineCollection(segments, 
                                   colors=PLOT_STYLE['colors'][category],
