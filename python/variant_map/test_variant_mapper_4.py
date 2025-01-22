@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 import pandas as pd
-from variant_mapper_4 import VariantMethylationMapper, VariantCounts
+from .variant_mapper_4 import VariantMethylationMapper, VariantCounts
 
 @pytest.fixture
 def test_mapper():
