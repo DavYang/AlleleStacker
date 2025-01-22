@@ -70,6 +70,17 @@ def process_variant_chunk(chunk_data):
             logging.debug(f"Error validating CpG at {chrom}:{pos} - {str(e)}")
             return False
     
+    def validate_cpg_context(fasta, chrom, pos, seq_context):
+        """Validate CpG context with boundary checking"""
+        try:
+            # Get actual reference sequence
+            ref_context = fasta.fetch(chrom, max(0, pos-1), min(pos+2, fasta.get_reference_length(chrom))).upper()
+            # Check if context matches expected sequence
+            return ref_context == seq_context.upper()
+        except Exception as e:
+            logging.debug(f"Error validating CpG at {chrom}:{pos} - {str(e)}")
+            return False
+    
     with pysam.FastaFile(str(ref_fasta_path)) as fasta:
         for var in variant_data_list:
             if None in var.gt or var.gt == (0,0):
