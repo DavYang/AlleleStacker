@@ -73,7 +73,7 @@ def read_methylation_file(file_path, haplotype):
         
         # Vectorized operations
         df['size'] = df['end'] - df['start']
-        df['category'] = pd.Categorical(f"{haplotype}-" + df['summary_label'])
+        df['category'] = pd.Categorical(df['summary_label'].astype(str).map(lambda x: f"{haplotype}-{x}"))
         return df
         
     except Exception as e:
