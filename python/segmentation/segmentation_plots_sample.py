@@ -137,7 +137,7 @@ def create_distribution_plot(data, category, sample_name, output_path):
 
 def create_chromosome_distribution_plot(df, sample_name, output_path):
     """
-    Create distribution plot of regions across chromosomes
+    Create distribution plot of regions across chromosomes with optimized performance
     
     Args:
         df: DataFrame containing chromosome and category information
@@ -146,18 +146,19 @@ def create_chromosome_distribution_plot(df, sample_name, output_path):
     """
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 12), height_ratios=[3, 1])
     
-    # Top plot: Bar chart
+    # Top plot: Bar chart - Using vectorized operations
     bar_width = 0.2
+    counts_df = pd.crosstab(df['chrom'], df['category']).reindex(CHROM_ORDER, fill_value=0)
+    
+    x = np.arange(len(CHROM_ORDER))
     for i, category in enumerate(CATEGORIES):
-        subset = df[df['category'] == category]
-        counts = subset['chrom'].value_counts().reindex(CHROM_ORDER, fill_value=0)
-        
-        x = np.arange(len(CHROM_ORDER)) + (i * bar_width)
-        ax1.bar(x, counts.values, 
-                width=bar_width,
-                label=category,
-                color=PLOT_STYLE['colors'][category],
-                alpha=0.6)
+        if category in counts_df.columns:
+            ax1.bar(x + (i * bar_width), 
+                   counts_df[category], 
+                   width=bar_width,
+                   label=category,
+                   color=PLOT_STYLE['colors'][category],
+                   alpha=0.6)
     
     # Customize top plot
     ax1.set_title(f'Chromosome Distribution of Methylation Regions - {sample_name}', 
@@ -166,7 +167,7 @@ def create_chromosome_distribution_plot(df, sample_name, output_path):
     ax1.set_ylabel('Number of Regions', fontsize=PLOT_STYLE['fontsize']['label'])
     
     group_center = bar_width * (len(CATEGORIES) - 1) / 2
-    ax1.set_xticks(np.arange(len(CHROM_ORDER)) + group_center)
+    ax1.set_xticks(x + group_center)
     ax1.set_xticklabels([chrom.replace('chr', '') for chrom in CHROM_ORDER],
                         rotation=45,
                         ha='right',
@@ -179,48 +180,51 @@ def create_chromosome_distribution_plot(df, sample_name, output_path):
                fontsize=PLOT_STYLE['fontsize']['tick'])
     ax1.set_yscale('log')
     
-    # Bottom plot: Genome-wide distribution
-    positions = []
-    categories = []
-    colors = []
+    # Bottom plot: Genome-wide distribution - Using numpy arrays for better performance
+    # Calculate chromosome lengths using vectorized operations
+    chrom_ends = df.groupby('chrom')['end'].max().reindex(CHROM_ORDER, fill_value=0)
+    cum_lengths = np.cumsum(chrom_ends)
+    chrom_starts = np.roll(cum_lengths, 1)
+    chrom_starts[0] = 0
     
-    # Calculate chromosome lengths and cumulative positions
-    chrom_lengths = {}
-    cum_pos = 0
-    for chrom in CHROM_ORDER:
-        chrom_data = df[df['chrom'] == chrom]
-        if not chrom_data.empty:
-            chrom_lengths[chrom] = chrom_data['end'].max()
-        else:
-            chrom_lengths[chrom] = 0
-        cum_pos += chrom_lengths[chrom]
+    # Create chromosome mapping dictionary for faster lookups
+    chrom_offset_dict = dict(zip(CHROM_ORDER, chrom_starts))
     
-    # Plot regions as vertical lines
-    cum_pos = 0
-    for chrom in CHROM_ORDER:
-        chrom_data = df[df['chrom'] == chrom]
-        if not chrom_data.empty:
-            for _, row in chrom_data.iterrows():
-                pos = cum_pos + (row['start'] + row['end']) / 2
-                positions.append(pos)
-                categories.append(row['category'])
-                colors.append(PLOT_STYLE['colors'][row['category']])
-        cum_pos += chrom_lengths[chrom]
+    # Vectorized calculation of positions
+    df['abs_position'] = df.apply(
+        lambda x: chrom_offset_dict[x['chrom']] + (x['start'] + x['end']) / 2, 
+        axis=1
+    )
     
-    # Plot vertical lines for each region
-    for pos, cat, color in zip(positions, categories, colors):
-        ax2.axvline(x=pos, color=color, alpha=0.1, linewidth=0.5)
+    # Plot regions efficiently using collections
+    from matplotlib.collections import LineCollection
+    
+    for category in CATEGORIES:
+        cat_data = df[df['category'] == category]
+        if not cat_data.empty:
+            positions = cat_data['abs_position'].values
+            segments = np.column_stack((
+                np.column_stack((positions, np.zeros_like(positions))),
+                np.column_stack((positions, np.ones_like(positions)))
+            )).reshape(-1, 2, 2)
+            
+            lc = LineCollection(segments, 
+                              colors=PLOT_STYLE['colors'][category],
+                              alpha=0.1,
+                              linewidth=0.5)
+            ax2.add_collection(lc)
+    
+    # Set plot limits
+    ax2.set_xlim(0, cum_lengths[-1])
+    ax2.set_ylim(0, 1)
     
     # Customize bottom plot
     ax2.set_title('Genome-wide Distribution of Methylation Regions', 
                   fontsize=PLOT_STYLE['fontsize']['title'])
     ax2.set_xlabel('Genomic Position', fontsize=PLOT_STYLE['fontsize']['label'])
     
-    # Add chromosome boundaries
-    cum_pos = 0
-    for chrom in CHROM_ORDER:
-        cum_pos += chrom_lengths[chrom]
-        ax2.axvline(x=cum_pos, color='black', linestyle='--', alpha=0.5)
+    # Add chromosome boundaries efficiently
+    ax2.vlines(cum_lengths, 0, 1, colors='black', linestyles='--', alpha=0.5)
     
     ax2.set_xticks([])  # Hide x-axis ticks for cleaner look
     plt.tight_layout()
