@@ -108,6 +108,10 @@ def process_variant_chunk(chunk_data):
                 logging.debug(f"REF context: {ref_seq}")
                 logging.debug(f"ALT context: {alt_seq}")
                 
+                logging.debug(f"Variant context at {var.chrom}:{var.pos}")
+                logging.debug(f"REF context: {ref_seq}")
+                logging.debug(f"ALT context: {alt_seq}")
+                
                 # Find and validate CpG positions
                 ref_cpgs = set()
                 alt_cpgs = set()
