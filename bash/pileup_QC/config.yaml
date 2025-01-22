@@ -1,15 +1,19 @@
 # config.yaml
 
-# Reference genome path
+# Reference genome path (required)
 reference_fasta: "/gs/gsfs0/users/greally-lab/David/reference_genomes/hg38/GRCh38_full_analysis_set_plus_decoy_hla.fa"
 
-# Base directories
+# Base directories (required)
 python: "/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/python/pileup_QC"
 vcf_base_dir: "/gs/gsfs0/users/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/sample_phased_small_variant_vcfs"
 bed_base_dir: "/gs/gsfs0/users/greally-lab/David/6_base-seq_SC1/WGS-analysis/outputs_compiled/20240501-results/cpg_pileup_beds"
 
-
-# Pipeline settings
+# Pipeline settings (required)
 conda:
-  # analysis_env: "/gs/gsfs0/users/davyang/.conda/envs/DYenv/envs/allele_stacker"
-  analysis_env: "anc_vig"
+  analysis_env: "anc_vig"  # Conda environment name
+
+# CpG filtering parameters (optional)
+filtering:
+  min_coverage: 10  # Minimum read coverage to consider a CpG site
+  min_prob: 0.9    # Minimum modification probability for high confidence
+  max_gap: 5000    # Maximum gap between CpG sites

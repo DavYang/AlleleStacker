@@ -24,41 +24,48 @@ if [ ! -f "$CONFIG_FILE" ]; then
     exit 1
 fi
 
-# Parse config file
-while IFS= read -r line || [[ -n "$line" ]]; do
-    # Skip empty lines and comments
-    [[ -z "$line" || "$line" =~ ^[[:space:]]*#.*$ ]] && continue
-    
-    # Remove leading/trailing whitespace and comments
-    line=$(echo "$line" | sed 's/#.*$//' | xargs)
-    [[ -z "$line" ]] && continue
-    
-    # Check if line contains a colon (key-value pair)
-    if [[ "$line" == *":"* ]]; then
-        # Extract key and value
-        key=$(echo "$line" | cut -d: -f1 | xargs)
-        value=$(echo "$line" | cut -d: -f2- | sed 's/^[[:space:]]*"//' | sed 's/"[[:space:]]*$//' | xargs)
-        
-        # Convert key format (remove spaces and dashes)
-        key=$(echo "$key" | tr -d ' ' | tr '-' '_')
-        
-        # Special handling for nested conda settings
-        if [[ "$key" == "conda" ]]; then
-            in_conda_section=true
-            continue
-        fi
-        
-        if [[ "$in_conda_section" == true ]]; then
-            if [[ "$key" == "analysis_env" ]]; then
-                declare "conda_analysis_env=$value"
-                in_conda_section=false
-            fi
-        else
-            # Regular variable declaration
-            declare "$key=$value"
-        fi
+# Function to parse YAML
+parse_yaml() {
+    local yaml_file=$1
+    local prefix=$2
+    local s
+    local w
+    local fs
+
+    s='[[:space:]]*'
+    w='[a-zA-Z0-9_.-]*'
+    fs=$(echo @|tr @ '\034')
+
+    (
+        sed -e '/- [^\"]'"[^\']"'.*: /s|\([ ]*\)- \([[:space:]]*\)|\1-\'$'\n''  \1\2|g' |
+        sed -ne '/^--/s|--||g; s|\"|\\\"|g; s/[[:space:]]*$//g;' \
+            -e 's/\$/\\\$/g' \
+            -e "/#.*"/!s| #.*$||g; s|^\($s\)\($w\)$s:$s\"\(.*\)\"$|\1$fs\2$fs\3|p" \
+            -e "s|^\($s\)\($w\)${s}[:-]$s\(.*\)$|\1$fs\2$fs\3|p" |
+        awk -F$fs '{
+            indent = length($1)/2;
+            if (length($2) == 0) { conj[indent]="+";} else {conj[indent]="";}
+            vname[indent] = $2;
+            for (i in vname) {if (i > indent) {delete vname[i]}}
+            if (length($3) > 0) {
+                vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
+                printf("%s%s%s%s=(\"%s\")\n", "'"$prefix"'",vn, $2, conj[indent-1], $3);
+            }
+        }'
+    ) < "$yaml_file"
+}
+
+# Parse config and create variables
+eval $(parse_yaml "$CONFIG_FILE")
+
+# Validate required config values
+required_vars=("reference_fasta" "python" "vcf_base_dir" "bed_base_dir" "conda_analysis_env")
+for var in "${required_vars[@]}"; do
+    if [ -z "${!var}" ]; then
+        echo "Error: Required config variable $var is not set"
+        exit 1
     fi
-done < "$CONFIG_FILE"
+done
 
 # Create base directories
 mkdir -p "${BASE_OUTPUT_DIR}"
