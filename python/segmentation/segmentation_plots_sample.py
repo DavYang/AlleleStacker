@@ -14,6 +14,12 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import multiprocessing as mp
+from concurrent.futures import ThreadPoolExecutor
+from functools import partial
+
+# Use Agg backend for faster non-interactive plotting
+plt.switch_backend('Agg')
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, 
@@ -42,7 +48,7 @@ CHROM_ORDER = ([f'chr{i}' for i in range(1, 23)] + ['chrX', 'chrY'])
 
 def read_methylation_file(file_path, haplotype):
     """
-    Read and process a methylation data file
+    Read and process a methylation data file with optimized settings
     
     Args:
         file_path: Path to the methylation BED file
@@ -52,14 +58,22 @@ def read_methylation_file(file_path, haplotype):
         DataFrame with processed methylation data or None if error
     """
     try:
+        # Use optimized pandas read_csv settings
         df = pd.read_csv(file_path, 
                         sep='\t',
                         comment='#',
                         names=['chrom', 'start', 'end', 'summary_label'],
-                        usecols=['chrom', 'start', 'end', 'summary_label'])
+                        usecols=['chrom', 'start', 'end', 'summary_label'],
+                        dtype={'chrom': 'category',
+                               'start': np.int32,
+                               'end': np.int32,
+                               'summary_label': 'category'},
+                        engine='c',
+                        memory_map=True)
         
+        # Vectorized operations
         df['size'] = df['end'] - df['start']
-        df['category'] = f"{haplotype}-" + df['summary_label']
+        df['category'] = pd.Categorical(f"{haplotype}-" + df['summary_label'])
         return df
         
     except Exception as e:
@@ -259,7 +273,7 @@ def create_sample_plots(df, sample_name, output_dir):
 
 def process_sample(sample_name, input_dir, base_output_dir):
     """
-    Process a single sample's methylation data
+    Process a single sample's methylation data using parallel processing
     
     Args:
         sample_name: Name of the sample to process
@@ -269,6 +283,11 @@ def process_sample(sample_name, input_dir, base_output_dir):
     # Create sample-specific output directory
     output_dir = Path(base_output_dir) / sample_name
     output_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Configure matplotlib for faster rendering
+    plt.rcParams['path.simplify'] = True
+    plt.rcParams['path.simplify_threshold'] = 1.0
+    plt.rcParams['agg.path.chunksize'] = 10000
     """
     Process a single sample's methylation data
     
@@ -328,7 +347,14 @@ def main():
     try:
         output_dir = Path(output_dir) 
         output_dir.mkdir(parents=True, exist_ok=True)
-        process_sample(sample_name, input_dir, output_dir)
+        
+        # Use all available CPU cores except one
+        num_cores = max(1, mp.cpu_count() - 1)
+        
+        # Process sample with parallel execution
+        with ThreadPoolExecutor(max_workers=num_cores) as executor:
+            process_fn = partial(process_sample, input_dir=input_dir, base_output_dir=output_dir)
+            executor.submit(process_fn, sample_name)
         
     except Exception as e:
         logging.error(f"Analysis failed: {e}")
