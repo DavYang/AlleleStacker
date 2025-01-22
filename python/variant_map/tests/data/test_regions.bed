@@ -1,0 +1,4 @@
+chrom	start	end	methylated_samples	unmethylated_samples
+chr1	1000	2000	sample-1,sample-2	sample-3,sample-4
+chr1	3000	4000	sample-1,sample-3	sample-2,sample-4
+chr2	1000	2000	sample-2,sample-4	sample-1,sample-3
