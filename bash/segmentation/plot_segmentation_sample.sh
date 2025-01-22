@@ -12,7 +12,7 @@
 source /public/apps/conda3/etc/profile.d/conda.sh
 conda activate anc_vig
 
-mkdir -p "$2"/segmentation_plots_sample
+mkdir -p "$2"
 mkdir -p logs
 
 SAMPLES=($(ls -d "$1"/SPM* | grep -v "log_files\|regions_by_label\|segmentation_scripts" | xargs -n1 basename | sort))

@@ -130,47 +130,85 @@ def create_chromosome_distribution_plot(df, sample_name, output_path):
         sample_name: Name of the sample
         output_path: Path to save the plot
     """
-    fig, ax = plt.subplots(figsize=(15, 8))
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 12), height_ratios=[3, 1])
     
-    # Get counts per chromosome for each category
+    # Top plot: Bar chart
     bar_width = 0.2
     for i, category in enumerate(CATEGORIES):
-        # Get chromosome counts for this category
         subset = df[df['category'] == category]
         counts = subset['chrom'].value_counts().reindex(CHROM_ORDER, fill_value=0)
         
-        # Plot bars with offset
         x = np.arange(len(CHROM_ORDER)) + (i * bar_width)
-        plt.bar(x, counts.values, 
-               width=bar_width,
-               label=category,
-               color=PLOT_STYLE['colors'][category],
-               alpha=0.6)
+        ax1.bar(x, counts.values, 
+                width=bar_width,
+                label=category,
+                color=PLOT_STYLE['colors'][category],
+                alpha=0.6)
     
-    # Customize plot
-    plt.title(f'Chromosome Distribution of Methylation Regions - {sample_name}', 
-             fontsize=PLOT_STYLE['fontsize']['title'])
-    plt.xlabel('Chromosome', fontsize=PLOT_STYLE['fontsize']['label'])
-    plt.ylabel('Number of Regions', fontsize=PLOT_STYLE['fontsize']['label'])
+    # Customize top plot
+    ax1.set_title(f'Chromosome Distribution of Methylation Regions - {sample_name}', 
+                  fontsize=PLOT_STYLE['fontsize']['title'])
+    ax1.set_xlabel('Chromosome', fontsize=PLOT_STYLE['fontsize']['label'])
+    ax1.set_ylabel('Number of Regions', fontsize=PLOT_STYLE['fontsize']['label'])
     
-    # Set x-axis ticks at center of each group
     group_center = bar_width * (len(CATEGORIES) - 1) / 2
-    plt.xticks(np.arange(len(CHROM_ORDER)) + group_center, 
-               [chrom.replace('chr', '') for chrom in CHROM_ORDER],
-               rotation=45,
-               ha='right',
+    ax1.set_xticks(np.arange(len(CHROM_ORDER)) + group_center)
+    ax1.set_xticklabels([chrom.replace('chr', '') for chrom in CHROM_ORDER],
+                        rotation=45,
+                        ha='right',
+                        fontsize=PLOT_STYLE['fontsize']['tick'])
+    
+    ax1.grid(True, axis='y', linestyle='--', alpha=0.3)
+    ax1.legend(frameon=True, 
+               framealpha=1.0, 
+               loc='upper right',
                fontsize=PLOT_STYLE['fontsize']['tick'])
+    ax1.set_yscale('log')
     
-    # Add grid
-    plt.grid(True, axis='y', linestyle='--', alpha=0.3)
+    # Bottom plot: Genome-wide distribution
+    positions = []
+    categories = []
+    colors = []
     
-    # Customize legend
-    plt.legend(frameon=True, 
-              framealpha=1.0, 
-              loc='upper right',
-              fontsize=PLOT_STYLE['fontsize']['tick'])
+    # Calculate chromosome lengths and cumulative positions
+    chrom_lengths = {}
+    cum_pos = 0
+    for chrom in CHROM_ORDER:
+        chrom_data = df[df['chrom'] == chrom]
+        if not chrom_data.empty:
+            chrom_lengths[chrom] = chrom_data['end'].max()
+        else:
+            chrom_lengths[chrom] = 0
+        cum_pos += chrom_lengths[chrom]
     
-    plt.yscale('log')  # Use log scale for y-axis
+    # Plot regions as vertical lines
+    cum_pos = 0
+    for chrom in CHROM_ORDER:
+        chrom_data = df[df['chrom'] == chrom]
+        if not chrom_data.empty:
+            for _, row in chrom_data.iterrows():
+                pos = cum_pos + (row['start'] + row['end']) / 2
+                positions.append(pos)
+                categories.append(row['category'])
+                colors.append(PLOT_STYLE['colors'][row['category']])
+        cum_pos += chrom_lengths[chrom]
+    
+    # Plot vertical lines for each region
+    for pos, cat, color in zip(positions, categories, colors):
+        ax2.axvline(x=pos, color=color, alpha=0.1, linewidth=0.5)
+    
+    # Customize bottom plot
+    ax2.set_title('Genome-wide Distribution of Methylation Regions', 
+                  fontsize=PLOT_STYLE['fontsize']['title'])
+    ax2.set_xlabel('Genomic Position', fontsize=PLOT_STYLE['fontsize']['label'])
+    
+    # Add chromosome boundaries
+    cum_pos = 0
+    for chrom in CHROM_ORDER:
+        cum_pos += chrom_lengths[chrom]
+        ax2.axvline(x=cum_pos, color='black', linestyle='--', alpha=0.5)
+    
+    ax2.set_xticks([])  # Hide x-axis ticks for cleaner look
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close()
@@ -219,7 +257,18 @@ def create_sample_plots(df, sample_name, output_dir):
         output_dir / f'{sample_name}_chrom_dist.png'
     )
 
-def process_sample(sample_name, input_dir, output_dir):
+def process_sample(sample_name, input_dir, base_output_dir):
+    """
+    Process a single sample's methylation data
+    
+    Args:
+        sample_name: Name of the sample to process
+        input_dir: Directory containing input files
+        base_output_dir: Base directory for outputs
+    """
+    # Create sample-specific output directory
+    output_dir = Path(base_output_dir) / sample_name
+    output_dir.mkdir(parents=True, exist_ok=True)
     """
     Process a single sample's methylation data
     
