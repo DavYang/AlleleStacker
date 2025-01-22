@@ -97,7 +97,7 @@ while read SAMPLE; do
         --mem=32G \
         --cpus-per-task=40 \
         --output="logs/${SAMPLE}_%j.out" \
-        --error=:"logs/${SAMPLE}_%j.err" \
+        --error="logs/${SAMPLE}_%j.err" \
         --wrap="
             set -e
 

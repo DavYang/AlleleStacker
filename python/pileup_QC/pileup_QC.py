@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import argparse
 import pysam 
 import pandas as pd
@@ -60,17 +59,6 @@ def process_variant_chunk(chunk_data):
         'hap2': CpGEffects()
     }
     
-    def validate_cpg_context(fasta, chrom, pos, seq_context):
-        """Validate CpG context with boundary checking"""
-        try:
-            # Get actual reference sequence
-            ref_context = fasta.fetch(chrom, max(0, pos-1), min(pos+2, fasta.get_reference_length(chrom))).upper()
-            # Check if context matches expected sequence
-            return ref_context == seq_context.upper()
-        except Exception as e:
-            logging.debug(f"Error validating CpG at {chrom}:{pos} - {str(e)}")
-            return False
-    
     with pysam.FastaFile(str(ref_fasta_path)) as fasta:
         for var in variant_data_list:
             if None in var.gt or var.gt == (0,0):
@@ -80,52 +68,36 @@ def process_variant_chunk(chunk_data):
                 continue
             
             try:
-                # Get sequence context with proper boundary checking
+                # Check CpG context
                 start = max(0, var.pos - 1 - 2)
-                end = min(var.pos - 1 + len(var.ref) + 2, fasta.get_reference_length(var.chrom))
-                
-                if end - start < 4:  # Minimum context needed
-                    logging.debug(f"Skipping variant at {var.chrom}:{var.pos} - insufficient context")
-                    continue
-                    
+                end = var.pos - 1 + len(var.ref) + 2
                 ref_seq = fasta.fetch(var.chrom, start, end).upper()
-                var_pos = 2  # Position of variant in context window
                 
-                # Construct alternative sequence
+                var_pos = 2  # Window size is 2
                 alt_seq = ref_seq[:var_pos] + var.alt + ref_seq[var_pos + len(var.ref):]
                 
-                logging.debug(f"Variant context at {var.chrom}:{var.pos}")
-                logging.debug(f"REF context: {ref_seq}")
-                logging.debug(f"ALT context: {alt_seq}")
-                
-                logging.debug(f"Variant context at {var.chrom}:{var.pos}")
-                logging.debug(f"REF context: {ref_seq}")
-                logging.debug(f"ALT context: {alt_seq}")
-                
-                # Find and validate CpG positions
+                # Find CpG positions
                 ref_cpgs = set()
                 alt_cpgs = set()
                 
-                # Check reference CpGs
                 for i in range(len(ref_seq)-1):
                     if ref_seq[i:i+2] == 'CG':
-                        cpg_pos = start + i
-                        if validate_cpg_context(fasta, var.chrom, cpg_pos, ref_seq[i:i+2]):
-                            ref_cpgs.add(cpg_pos)
-                            logging.debug(f"Valid reference CpG found at {var.chrom}:{cpg_pos}")
-                
-                # Check alternative CpGs
-                for i in range(len(alt_seq)-1):
+                        ref_cpgs.add(start + i)
                     if alt_seq[i:i+2] == 'CG':
-                        cpg_pos = start + i
-                        # Only validate alt CpGs that aren't in reference
-                        if cpg_pos not in ref_cpgs:
-                            alt_cpgs.add(cpg_pos)
-                            logging.debug(f"Alternative CpG found at {var.chrom}:{cpg_pos}")
+                        alt_cpgs.add(start + i)
+                
+                # Validate reference CpGs
+                validated_ref_cpgs = set()
+                for p in ref_cpgs:
+                    try:
+                        if fasta.fetch(var.chrom, p, p+2).upper() == 'CG':
+                            validated_ref_cpgs.add(p)
+                    except:
+                        continue
                 
                 # Process effects
-                destroyed = ref_cpgs - alt_cpgs
-                created = alt_cpgs - ref_cpgs
+                destroyed = validated_ref_cpgs - alt_cpgs
+                created = alt_cpgs - validated_ref_cpgs
                 variant_pos = var.pos - 1
                 
                 if var.gt == (1,1):  # Homozygous ALT
