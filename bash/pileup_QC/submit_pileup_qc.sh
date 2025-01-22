@@ -4,9 +4,10 @@
 SAMPLES_FILE=$1
 CONFIG_FILE=$2
 BASE_OUTPUT_DIR=$3
+PYTHON_DIR=$4
 
 # Check args
-if [ $# -ne 3 ]; then
+if [ $# -ne 4 ]; then
     echo "Usage: $0 SAMPLES_FILE CONFIG_FILE OUTPUT_DIR"
     echo "Example: $0 samples.txt config.yaml /path/to/output"
     exit 1
@@ -61,7 +62,7 @@ done < "$CONFIG_FILE"
 
 # Create base directories
 mkdir -p "${BASE_OUTPUT_DIR}"
-mkdir -p "${BASE_OUTPUT_DIR}/logs"
+mkdir -p logs
 
 # Submit jobs
 while read SAMPLE; do
@@ -77,8 +78,8 @@ while read SAMPLE; do
         --time=4:00:00 \
         --mem=32G \
         --cpus-per-task=40 \
-        --output="${BASE_OUTPUT_DIR}/logs/${SAMPLE}_%j.out" \
-        --error="${BASE_OUTPUT_DIR}/logs/${SAMPLE}_%j.err" \
+        --output="logs/${SAMPLE}_%j.out" \
+        --error=:"logs/${SAMPLE}_%j.err" \
         --wrap="
             set -e
 
@@ -88,7 +89,7 @@ while read SAMPLE; do
             # Run QC
             source /public/apps/conda3/etc/profile.d/conda.sh
             conda activate ${conda_analysis_env}
-            python ${python}/pileup_QC.py \
+            python ${PYTHON_DIR}/pileup_QC.py \
                 --vcf ${vcf_base_dir}/${SAMPLE}/${SAMPLE}.*.vcf.gz \
                 --ref ${reference_fasta} \
                 --prefix ${SAMPLE} \
