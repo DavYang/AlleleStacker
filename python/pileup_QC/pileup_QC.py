@@ -1,9 +1,4 @@
 #!/usr/bin/env python
-"""
-CpG Methylation Data QC and Filtering Script
-Last modified: 2025-01-22
-Changes: Improved CpG context validation and logging
-"""
 
 import argparse
 import pysam 
