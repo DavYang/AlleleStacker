@@ -56,7 +56,7 @@ def plot_distribution(input_dir, output_dir, sample_name):
 
 def create_chromosome_plot(df, output_dir, sample_name):
     # Calculate cumulative chromosome lengths for linearization
-    chrom_lengths = {
+    CHROMOSOME_LENGTHS = {
         'chr1': 248956422, 'chr2': 242193529, 'chr3': 198295559,
         'chr4': 190214555, 'chr5': 181538259, 'chr6': 170805979,
         'chr7': 159345973, 'chr8': 145138636, 'chr9': 138394717,
