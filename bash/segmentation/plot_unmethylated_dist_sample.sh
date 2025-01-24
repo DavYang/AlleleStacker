@@ -56,6 +56,6 @@ SAMPLE=${SAMPLES[$CURRENT_INDEX]}
 
 # Run the Python script with the correct paths
 python ./python/segmentation/plot_unmethylated_distribution.py \
-    --input-dir "$1/regions" \
+    --input-dir "$1" \
     --output-dir "$2" \
     --sample-name "$SAMPLE"
