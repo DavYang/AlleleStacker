@@ -13,12 +13,30 @@ def setup_logging():
 
 def load_methylation_data(file_path):
     try:
-        # Read all columns from the BED file
-        df = pd.read_csv(file_path, sep='\t', header=0,
-                        dtype={'chrom': str, 'start': int, 'end': int},
+        # First read the header to get column names
+        header = pd.read_csv(file_path, sep='\t', nrows=0)
+        column_names = header.columns.tolist()
+        
+        # Create dtype dictionary for all columns
+        dtypes = {col: str for col in column_names}  # Default all to string
+        if 'start' in column_names:
+            dtypes['start'] = int
+        if 'end' in column_names:
+            dtypes['end'] = int
+            
+        # Read the full file with correct dtypes
+        df = pd.read_csv(file_path, sep='\t', 
+                        dtype=dtypes,
                         low_memory=False)
+                        
+        # Ensure required columns exist
+        required_cols = ['chrom', 'start', 'end']
+        if not all(col in df.columns for col in required_cols):
+            logging.error(f"Missing required columns in {file_path}")
+            return None
+            
         # Keep only the columns we need
-        df = df[['chrom', 'start', 'end']]
+        df = df[required_cols]
         df['size'] = df['end'] - df['start']
         return df
     except pd.errors.EmptyDataError:
