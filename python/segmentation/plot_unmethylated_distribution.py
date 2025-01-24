@@ -13,20 +13,36 @@ def setup_logging():
 
 def load_methylation_data(file_path):
     try:
-        # First check if file is empty
+        # First check file content
         with open(file_path) as f:
-            first_line = f.readline().strip()
-            if not first_line:
+            lines = f.readlines()
+            if not lines:
                 logging.warning(f"{file_path} is empty")
                 return None
-        
-        # Read the file, skipping any comment or header lines
-        df = pd.read_csv(file_path, sep='\t',
-                        comment='#',  # Skip any comment lines
+            
+            # Skip header lines until we find valid data
+            data_lines = []
+            for line in lines:
+                if line.strip() and not line.startswith('#'):
+                    fields = line.strip().split('\t')
+                    try:
+                        # Test if second and third fields can be converted to int
+                        int(fields[1])
+                        int(fields[2])
+                        data_lines.append(line)
+                    except (ValueError, IndexError):
+                        continue
+                        
+        if not data_lines:
+            logging.warning(f"No valid data found in {file_path}")
+            return None
+            
+        # Create DataFrame from valid lines
+        df = pd.read_csv(pd.io.common.StringIO(''.join(data_lines)), 
+                        sep='\t',
                         names=['chrom', 'start', 'end', 'label', 'score', 'strand'],
-                        dtype={'chrom': str, 'start': str, 'end': str,  # Read as strings first
-                              'label': str, 'score': str, 'strand': str},
-                        low_memory=False)
+                        dtype={'chrom': str, 'start': int, 'end': int,
+                              'label': str, 'score': str, 'strand': str})
         
         # Convert numeric columns after loading
         df['start'] = pd.to_numeric(df['start'], errors='coerce')
