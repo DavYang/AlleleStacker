@@ -71,6 +71,9 @@ def load_methylation_data(file_path):
 def plot_distribution(input_dir, output_dir, sample_name):
     dfs = []
     input_dir = Path(input_dir)
+    # Create sample-specific output directory
+    sample_output_dir = Path(output_dir) / sample_name
+    sample_output_dir.mkdir(parents=True, exist_ok=True)
     
     for hap in ['H1', 'H2']:
         for state in ['M', 'U']:
@@ -89,6 +92,43 @@ def plot_distribution(input_dir, output_dir, sample_name):
 
     combined_df = pd.concat(dfs, ignore_index=True)
     create_plots(combined_df, output_dir, sample_name)
+
+def create_chromosome_plot(df, output_dir, sample_name):
+    plt.figure(figsize=(15, 8))
+    
+    # Define chromosome order
+    chrom_order = ([str(i) for i in range(1, 23)] + ['X', 'Y'])
+    df['chrom'] = pd.Categorical(df['chrom'].str.replace('chr', ''), 
+                                categories=chrom_order, 
+                                ordered=True)
+    
+    # Create separate plots for methylated and unmethylated
+    for state, title, colors in [('M', 'Methylated', ('#FF0000', '#FF6666')), 
+                                ('U', 'Unmethylated', ('#0000FF', '#6666FF'))]:
+        plt.figure(figsize=(15, 6))
+        state_df = df[df['state'] == state]
+        
+        for hap, color in zip(['H1', 'H2'], colors):
+            hap_df = state_df[state_df['haplotype'] == hap]
+            plt.scatter(hap_df['chrom'], 
+                       hap_df['start'], 
+                       c=color, 
+                       alpha=0.5, 
+                       s=10, 
+                       label=f'{hap}')
+        
+        plt.title(f"{title} Regions by Chromosome - {sample_name}")
+        plt.xlabel("Chromosome")
+        plt.ylabel("Position (bp)")
+        plt.yscale('log')
+        plt.grid(True, alpha=0.2)
+        plt.legend()
+        plt.xticks(rotation=45)
+        
+        output_path = Path(output_dir) / sample_name / f"{sample_name}_{state}_chromosome_dist.png"
+        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        plt.close()
+        logging.info(f"Saved chromosome plot to {output_path}")
 
 def create_plots(df, output_dir, sample_name):
     plt.figure(figsize=(15, 6))
@@ -123,7 +163,7 @@ def create_plots(df, output_dir, sample_name):
     plt.suptitle(f"Methylation Region Size Distribution - {sample_name}", y=1.05)
     plt.tight_layout()
     
-    output_path = Path(output_dir) / f"{sample_name}_methylation_distribution.png"
+    output_path = Path(output_dir) / sample_name / f"{sample_name}_methylation_distribution.png"
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close()
     logging.info(f"Saved plot to {output_path}")
@@ -138,6 +178,7 @@ def main():
     setup_logging()
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     plot_distribution(args.input_dir, args.output_dir, args.sample_name)
+    create_chromosome_plot(df, args.output_dir, args.sample_name)
 
 if __name__ == "__main__":
     main()
