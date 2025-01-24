@@ -17,13 +17,29 @@ mkdir -p "$2"
 mkdir -p logs
 
 # Get list of unique sample names from the bed files in H1_M directory
-# This assumes all samples have files in H1_M
-SAMPLES=($(ls "$1"/regions/H1_M/SPM*.bed | xargs -n1 basename | sed 's/_H1_M.bed//g' | sort -u))
+# Using absolute paths and proper directory structure
+cd "$1/regions/H1_M" || exit 1
+SAMPLES=($(ls SPM*.bed | sed 's/_H1_M.bed//g' | sort -u))
+
+if [ ${#SAMPLES[@]} -eq 0 ]; then
+    echo "No sample files found in $1/regions/H1_M"
+    exit 1
+fi
+
 CURRENT_INDEX=$((SLURM_ARRAY_TASK_ID - 1))
 SAMPLE=${SAMPLES[$CURRENT_INDEX]}
 
+if [ -z "$SAMPLE" ]; then
+    echo "No sample found for index $CURRENT_INDEX"
+    exit 1
+fi
+
+echo "Processing sample: $SAMPLE"
+
 # Run the Python script with the correct paths
-python ./python/segmentation/plot_unmethylated_distribution.py \
-    --input-dir "$1" \
+# Assuming the Python script is in the project root's python/segmentation directory
+PROJECT_ROOT=$(dirname $(dirname $(dirname "$1")))
+python "$PROJECT_ROOT/python/segmentation/plot_unmethylated_distribution.py" \
+    --input-dir "$1/regions" \
     --output-dir "$2" \
     --sample-name "$SAMPLE"
