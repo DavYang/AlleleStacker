@@ -13,11 +13,12 @@ def setup_logging():
 
 def load_methylation_data(file_path):
     try:
+        # Read all columns from the BED file
         df = pd.read_csv(file_path, sep='\t', header=0,
-                        names=['chrom', 'start', 'end'],
                         dtype={'chrom': str, 'start': int, 'end': int},
-                        low_memory=False,
-                        skiprows=1)  # Skip the header row
+                        low_memory=False)
+        # Keep only the columns we need
+        df = df[['chrom', 'start', 'end']]
         df['size'] = df['end'] - df['start']
         return df
     except pd.errors.EmptyDataError:
