@@ -13,10 +13,11 @@ def setup_logging():
 
 def load_methylation_data(file_path):
     try:
-        df = pd.read_csv(file_path, sep='\t', header=None, 
+        df = pd.read_csv(file_path, sep='\t', header=0,
                         names=['chrom', 'start', 'end'],
                         dtype={'chrom': str, 'start': int, 'end': int},
-                        low_memory=False)
+                        low_memory=False,
+                        skiprows=1)  # Skip the header row
         df['size'] = df['end'] - df['start']
         return df
     except pd.errors.EmptyDataError:
