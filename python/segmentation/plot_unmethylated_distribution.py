@@ -13,13 +13,27 @@ def setup_logging():
 
 def load_methylation_data(file_path):
     try:
-        # Read the file with specific column names and types
+        # First check if file is empty
+        with open(file_path) as f:
+            first_line = f.readline().strip()
+            if not first_line:
+                logging.warning(f"{file_path} is empty")
+                return None
+        
+        # Read the file, skipping any comment or header lines
         df = pd.read_csv(file_path, sep='\t',
+                        comment='#',  # Skip any comment lines
                         names=['chrom', 'start', 'end', 'label', 'score', 'strand'],
-                        dtype={'chrom': str, 'start': int, 'end': int, 
-                               'label': str, 'score': str, 'strand': str},
-                        skiprows=1,  # Skip header row
+                        dtype={'chrom': str, 'start': str, 'end': str,  # Read as strings first
+                              'label': str, 'score': str, 'strand': str},
                         low_memory=False)
+        
+        # Convert numeric columns after loading
+        df['start'] = pd.to_numeric(df['start'], errors='coerce')
+        df['end'] = pd.to_numeric(df['end'], errors='coerce')
+        
+        # Drop any rows where conversion failed
+        df = df.dropna(subset=['start', 'end'])
                         
         # Ensure required columns exist
         required_cols = ['chrom', 'start', 'end']
