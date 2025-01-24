@@ -127,7 +127,7 @@ def create_chromosome_plot(df, output_dir, sample_name):
         plt.legend()
         plt.xticks(rotation=45)
         
-        output_path = Path(output_dir) / sample_name / f"{sample_name}_{state}_chromosome_dist.png"
+        output_path = output_dir / f"{sample_name}_{state}_chromosome_dist.png"
         plt.savefig(output_path, dpi=300, bbox_inches='tight')
         plt.close()
         logging.info(f"Saved chromosome plot to {output_path}")
@@ -165,7 +165,7 @@ def create_plots(df, output_dir, sample_name):
     plt.suptitle(f"Methylation Region Size Distribution - {sample_name}", y=1.05)
     plt.tight_layout()
     
-    output_path = Path(output_dir) / sample_name / f"{sample_name}_methylation_distribution.png"
+    output_path = output_dir / f"{sample_name}_methylation_distribution.png"
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close()
     logging.info(f"Saved plot to {output_path}")
