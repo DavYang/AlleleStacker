@@ -55,8 +55,12 @@ def plot_distribution(input_dir, output_dir, sample_name):
     create_chromosome_plot(combined_df, sample_output_dir, sample_name)
 
 def create_chromosome_plot(df, output_dir, sample_name):
+    # Filter for standard chromosomes only
+    valid_chroms = [f'chr{i}' for i in range(1, 23)] + ['chrX', 'chrY']
+    df = df[df['chrom'].isin(valid_chroms)].copy()
+
     # Calculate cumulative chromosome lengths for linearization
-    CHROMOSOME_LENGTHS = {
+    chrom_lengths = {
         'chr1': 248956422, 'chr2': 242193529, 'chr3': 198295559,
         'chr4': 190214555, 'chr5': 181538259, 'chr6': 170805979,
         'chr7': 159345973, 'chr8': 145138636, 'chr9': 138394717,
@@ -70,9 +74,9 @@ def create_chromosome_plot(df, output_dir, sample_name):
     # Calculate cumulative positions
     cumulative_pos = {}
     current_pos = 0
-    for chrom, length in chrom_lengths.items():  # Use chrom_lengths here
+    for chrom in valid_chroms:
         cumulative_pos[chrom] = current_pos
-        current_pos += length
+        current_pos += chrom_lengths[chrom]
 
     # Function to linearize position
     def get_linear_pos(row):
@@ -99,9 +103,10 @@ def create_chromosome_plot(df, output_dir, sample_name):
                          linewidth=1)
         
         # Add chromosome boundary lines and labels
-        for chrom, pos in cumulative_pos.items():
+        for chrom in valid_chroms:
+            pos = cumulative_pos[chrom]
             plt.axvline(x=pos, color='gray', linestyle='--', alpha=0.3)
-            plt.text(pos + chrom_lengths[chrom] / 2, # Use chrom_lengths here
+            plt.text(pos + chrom_lengths[chrom]/2, 
                     plt.ylim()[1], 
                     chrom.replace('chr', ''),
                     ha='center',
