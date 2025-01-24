@@ -49,9 +49,19 @@ def load_methylation_data(file_path):
         df['end'] = pd.to_numeric(df['end'], errors='coerce')
         
         # Drop any rows where conversion failed
-        df = df.dropna(subset=['start', 'end'])
-                        
         # Ensure required columns exist
+        required_cols = ['chrom', 'start', 'end']
+        if not all(col in df.columns for col in required_cols):
+            logging.error(f"Missing required columns in {file_path}")
+            return None
+
+        # Keep only the columns we need
+        df = df[required_cols]
+
+        # Convert to numeric and drop rows with NaN in 'start' and 'end'
+        df['start'] = pd.to_numeric(df['start'], errors='coerce')
+        df['end'] = pd.to_numeric(df['end'], errors='coerce')
+        df = df.dropna(subset=['start', 'end'])
         required_cols = ['chrom', 'start', 'end']
         if not all(col in df.columns for col in required_cols):
             logging.error(f"Missing required columns in {file_path}")
