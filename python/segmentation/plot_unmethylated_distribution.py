@@ -13,61 +13,12 @@ def setup_logging():
 
 def load_methylation_data(file_path):
     try:
-        # First check file content
-        with open(file_path) as f:
-            lines = f.readlines()
-            if not lines:
-                logging.warning(f"{file_path} is empty")
-                return None
-            
-            # Skip header lines until we find valid data
-            data_lines = []
-            for line in lines:
-                if line.strip() and not line.startswith('#'):
-                    fields = line.strip().split('\t')
-                    try:
-                        # Test if second and third fields can be converted to int
-                        int(fields[1])
-                        int(fields[2])
-                        data_lines.append(line)
-                    except (ValueError, IndexError):
-                        continue
-                        
-        if not data_lines:
-            logging.warning(f"No valid data found in {file_path}")
-            return None
-            
-        # Create DataFrame from valid lines
-        df = pd.read_csv(pd.io.common.StringIO(''.join(data_lines)), 
-                        sep='\t',
-                        names=['chrom', 'start', 'end', 'label', 'score', 'strand'],
-                        dtype={'chrom': str, 'start': int, 'end': int,
-                              'label': str, 'score': str, 'strand': str})
-        
-        # Convert numeric columns after loading
-        df['start'] = pd.to_numeric(df['start'], errors='coerce')
-        df['end'] = pd.to_numeric(df['end'], errors='coerce')
-        
-        # Drop any rows where conversion failed
-        # Ensure required columns exist
-        required_cols = ['chrom', 'start', 'end']
-        if not all(col in df.columns for col in required_cols):
-            logging.error(f"Missing required columns in {file_path}")
-            return None
-
-        # Keep only the columns we need
-        df = df[required_cols]
-
-        # Convert to numeric and drop rows with NaN in 'start' and 'end'
-        df['start'] = pd.to_numeric(df['start'], errors='coerce')
-        df['end'] = pd.to_numeric(df['end'], errors='coerce')
-        df = df.dropna(subset=['start', 'end'])
+        df = pd.read_csv(file_path, sep='\t')
         required_cols = ['chrom', 'start', 'end']
         if not all(col in df.columns for col in required_cols):
             logging.error(f"Missing required columns in {file_path}")
             return None
             
-        # Keep only the columns we need
         df = df[required_cols]
         df['size'] = df['end'] - df['start']
         return df
@@ -81,7 +32,6 @@ def load_methylation_data(file_path):
 def plot_distribution(input_dir, output_dir, sample_name):
     dfs = []
     input_dir = Path(input_dir)
-    # Create sample-specific output directory
     sample_output_dir = Path(output_dir) / sample_name
     sample_output_dir.mkdir(parents=True, exist_ok=True)
     
@@ -104,40 +54,67 @@ def plot_distribution(input_dir, output_dir, sample_name):
     create_plots(combined_df, sample_output_dir, sample_name)
     create_chromosome_plot(combined_df, sample_output_dir, sample_name)
 
-
 def create_chromosome_plot(df, output_dir, sample_name):
-    plt.figure(figsize=(15, 8))
+    # Calculate cumulative chromosome lengths for linearization
+    chrom_lengths = {
+        'chr1': 248956422, 'chr2': 242193529, 'chr3': 198295559,
+        'chr4': 190214555, 'chr5': 181538259, 'chr6': 170805979,
+        'chr7': 159345973, 'chr8': 145138636, 'chr9': 138394717,
+        'chr10': 133797422, 'chr11': 135086622, 'chr12': 133275309,
+        'chr13': 114364328, 'chr14': 107043718, 'chr15': 101991189,
+        'chr16': 90338345, 'chr17': 83257441, 'chr18': 80373285,
+        'chr19': 58617616, 'chr20': 64444167, 'chr21': 46709983,
+        'chr22': 50818468, 'chrX': 156040895, 'chrY': 57227415
+    }
     
-    # Define chromosome order
-    chrom_order = ([str(i) for i in range(1, 23)] + ['X', 'Y'])
-    df['chrom'] = pd.Categorical(df['chrom'].str.replace('chr', ''), 
-                                categories=chrom_order, 
-                                ordered=True)
+    # Calculate cumulative positions
+    cumulative_pos = {}
+    current_pos = 0
+    for chrom in chrom_lengths:
+        cumulative_pos[chrom] = current_pos
+        current_pos += chrom_lengths[chrom]
+
+    # Function to linearize position
+    def get_linear_pos(row):
+        return cumulative_pos[row['chrom']] + row['start']
+
+    # Add linearized position
+    df['linear_pos'] = df.apply(get_linear_pos, axis=1)
     
     # Create separate plots for methylated and unmethylated
     for state, title, colors in [('M', 'Methylated', ('#FF0000', '#FF6666')), 
                                 ('U', 'Unmethylated', ('#0000FF', '#6666FF'))]:
-        plt.figure(figsize=(15, 6))
+        plt.figure(figsize=(20, 8))
         state_df = df[df['state'] == state]
         
+        # Plot regions as lines to show their size
         for hap, color in zip(['H1', 'H2'], colors):
             hap_df = state_df[state_df['haplotype'] == hap]
-            plt.scatter(hap_df['chrom'], 
-                       hap_df['start'], 
-                       c=color, 
-                       alpha=0.5, 
-                       s=10, 
-                       label=f'{hap}')
+            for _, row in hap_df.iterrows():
+                plt.hlines(y=row['size'], 
+                         xmin=row['linear_pos'],
+                         xmax=row['linear_pos'] + row['size'],
+                         color=color,
+                         alpha=0.5,
+                         linewidth=1)
+        
+        # Add chromosome boundary lines and labels
+        for chrom, pos in cumulative_pos.items():
+            plt.axvline(x=pos, color='gray', linestyle='--', alpha=0.3)
+            plt.text(pos + chrom_lengths[chrom]/2, 
+                    plt.ylim()[1], 
+                    chrom.replace('chr', ''),
+                    ha='center',
+                    va='bottom')
         
         plt.title(f"{title} Regions by Chromosome - {sample_name}")
-        plt.xlabel("Chromosome")
-        plt.ylabel("Position (bp)")
+        plt.xlabel("Genomic Position")
+        plt.ylabel("Region Size (bp)")
         plt.yscale('log')
         plt.grid(True, alpha=0.2)
-        plt.legend()
-        plt.xticks(rotation=45)
+        plt.legend(['H1', 'H2'])
         
-        output_path = output_dir / f"{sample_name}_{state}_chromosome_dist.png"
+        output_path = output_dir / f"{sample_name}_{state}_linear_chromosome_dist.png"
         plt.savefig(output_path, dpi=300, bbox_inches='tight')
         plt.close()
         logging.info(f"Saved chromosome plot to {output_path}")
@@ -190,7 +167,6 @@ def main():
     setup_logging()
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     plot_distribution(args.input_dir, args.output_dir, args.sample_name)
-
 
 if __name__ == "__main__":
     main()
