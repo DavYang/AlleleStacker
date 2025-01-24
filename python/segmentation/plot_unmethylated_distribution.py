@@ -70,9 +70,9 @@ def create_chromosome_plot(df, output_dir, sample_name):
     # Calculate cumulative positions
     cumulative_pos = {}
     current_pos = 0
-    for chrom in chrom_lengths:
+    for chrom, length in chrom_lengths.items():
         cumulative_pos[chrom] = current_pos
-        current_pos += chrom_lengths[chrom]
+        current_pos += length
 
     # Function to linearize position
     def get_linear_pos(row):
@@ -101,7 +101,7 @@ def create_chromosome_plot(df, output_dir, sample_name):
         # Add chromosome boundary lines and labels
         for chrom, pos in cumulative_pos.items():
             plt.axvline(x=pos, color='gray', linestyle='--', alpha=0.3)
-            plt.text(pos + chrom_lengths[chrom]/2, 
+            plt.text(pos + chrom_lengths[chrom] / 2,
                     plt.ylim()[1], 
                     chrom.replace('chr', ''),
                     ha='center',
