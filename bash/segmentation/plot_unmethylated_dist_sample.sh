@@ -1,35 +1,57 @@
-#!/bin/bash                                                                   
-#SBATCH --job-name=plot_unmethylated_dist_sample                              
-#SBATCH --output=logs/plot_unmethylated_dist_sample_%A_%a.out                 
-#SBATCH --error=logs/plot_unmethylated_dist_sample_%A_%a.err                  
-#SBATCH --array=1-21 # Adjust as needed                                       
-#SBATCH --ntasks=1                                                            
-#SBATCH --cpus-per-task=1                                                     
-#SBATCH --mem=16G                                                             
-#SBATCH --time=02:00:00                                                       
-#SBATCH --partition=quick                                                     
-                                                                              
-source /public/apps/conda3/etc/profile.d/conda.sh                             
-conda activate anc_vig                                                        
-                                                                              
-# Create output and log directories                                           
-mkdir -p "$2"                                                                 
-mkdir -p logs                                                                 
-                                                                              
-# Get sorted list of sample directories, excluding specific subdirectories    
-cd "$1"
+#!/bin/bash
+#SBATCH --job-name=unmeth_dist
+#SBATCH --output=logs/unmeth_dist_%A_%a.out
+#SBATCH --error=logs/unmeth_dist_%A_%a.err
+#SBATCH --array=1-21
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=16G
+#SBATCH --time=02:00:00
+#SBATCH --partition=quick
 
-SAMPLES=($(ls -d "$1"/SPM* | grep -v 
-"log_files\|regions_by_label\|segmentation_scripts\|unmethylated_distribution_
-plots" | xargs -n1 basename | sort))
-CURRENT_INDEX=$((SLURM_ARRAY_TASK_ID - 1))                                    
-SAMPLE=${SAMPLES[$CURRENT_INDEX]}                                             
-                                                                              
-# Path to the Python script                                                   
-PYTHON="./python/segmentation"                                                
-                                                                              
-# Run the Python plotting script                                              
-python "$PYTHON/plot_unmethylated_distribution.py" "$1" "$2" "$SAMPLE"  
+source /public/apps/conda3/etc/profile.d/conda.sh
+conda activate anc_vig
+
+# Create output and log directories
+mkdir -p "$2"
+mkdir -p logs
+
+# Get list of unique sample names from the bed files in H1_M directory
+# Using proper path construction and error handling
+input_dir="$1/regions/H1_M"
+if [ ! -d "$input_dir" ]; then
+    echo "Error: Directory not found: $input_dir"
+    exit 1
+fi
+
+cd "$input_dir" || exit 1
+
+# Get sample names from bed files, removing the _H1_M.bed suffix
+SAMPLES=($(ls -1 SPM*.bed 2>/dev/null | sed 's/_H1_M\.bed$//' | sort -u))
+
+if [ ${#SAMPLES[@]} -eq 0 ]; then
+    echo "Error: No SPM*.bed files found in $input_dir"
+    exit 1
+fi
+
+CURRENT_INDEX=$((SLURM_ARRAY_TASK_ID - 1))
+
+if [ $CURRENT_INDEX -ge ${#SAMPLES[@]} ]; then
+    echo "Error: Array index $CURRENT_INDEX is out of bounds. Only ${#SAMPLES[@]} samples found."
+    exit 1
+fi
+
+SAMPLE=${SAMPLES[$CURRENT_INDEX]}
+
+echo "Processing sample: $SAMPLE"
+echo "Input directory: $1"
+echo "Output directory: $2"
+
+# Run the Python script with the correct paths
+python ./python/segmentation/plot_unmethylated_distribution.py \
+    --input-dir "$1/regions" \
+    --output-dir "$2" \
+    --sample-name "$SAMPLE"
 #!/bin/bash
 #SBATCH --job-name=unmeth_dist
 #SBATCH --output=logs/unmeth_dist_%A_%a.out
