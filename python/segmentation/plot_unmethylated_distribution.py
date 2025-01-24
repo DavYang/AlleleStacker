@@ -91,7 +91,9 @@ def plot_distribution(input_dir, output_dir, sample_name):
         return
 
     combined_df = pd.concat(dfs, ignore_index=True)
-    create_plots(combined_df, output_dir, sample_name)
+    create_plots(combined_df, sample_output_dir, sample_name)
+    create_chromosome_plot(combined_df, sample_output_dir, sample_name)
+
 
 def create_chromosome_plot(df, output_dir, sample_name):
     plt.figure(figsize=(15, 8))
@@ -178,7 +180,7 @@ def main():
     setup_logging()
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     plot_distribution(args.input_dir, args.output_dir, args.sample_name)
-    create_chromosome_plot(df, args.output_dir, args.sample_name)
+
 
 if __name__ == "__main__":
     main()
