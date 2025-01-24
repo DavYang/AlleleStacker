@@ -13,20 +13,12 @@ def setup_logging():
 
 def load_methylation_data(file_path):
     try:
-        # First read the header to get column names
-        header = pd.read_csv(file_path, sep='\t', nrows=0)
-        column_names = header.columns.tolist()
-        
-        # Create dtype dictionary for all columns
-        dtypes = {col: str for col in column_names}  # Default all to string
-        if 'start' in column_names:
-            dtypes['start'] = int
-        if 'end' in column_names:
-            dtypes['end'] = int
-            
-        # Read the full file with correct dtypes
-        df = pd.read_csv(file_path, sep='\t', 
-                        dtype=dtypes,
+        # Read the file with specific column names and types
+        df = pd.read_csv(file_path, sep='\t',
+                        names=['chrom', 'start', 'end', 'label', 'score', 'strand'],
+                        dtype={'chrom': str, 'start': int, 'end': int, 
+                               'label': str, 'score': str, 'strand': str},
+                        skiprows=1,  # Skip header row
                         low_memory=False)
                         
         # Ensure required columns exist
