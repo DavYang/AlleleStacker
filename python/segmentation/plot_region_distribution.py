@@ -55,18 +55,8 @@ def plot_distributions(df, output_dir, condition):
 
         plt.xlabel('Chromosome Position')
         plt.tight_layout(rect=[0, 0, 1, 0.95])
-        plt.savefig(output_dir / f'{condition}_{sample}_chromosome_density.png', dpi=300, bbox_inches='tight')
-        plt.close()
-
-    # Size distribution
-    plt.figure(figsize=(10, 6))
-    sns.boxplot(data=df_filtered, x='sample', y='size', showfliers=False)
-    plt.xticks(rotation=45, ha='right')
-    plt.yscale('log')
-    plt.title(f'Region Size Distribution - {condition}')
-    plt.tight_layout()
-    plt.savefig(output_dir / f'{condition}_size_distribution.png', dpi=300, bbox_inches='tight')
-    plt.close()
+        plt.savefig(output_dir / f'{condition}_{sample}_chromosome_density.png', dpi=300)
+        plt.close(fig) # Close the figure to avoid memory issues
 
     # Summary statistics
     stats = df_filtered.groupby('sample').agg({
@@ -74,6 +64,11 @@ def plot_distributions(df, output_dir, condition):
         'chrom': lambda x: len(x.unique())
     }).round(2)
     stats.to_csv(output_dir / f'{condition}_summary_stats.csv')
+
+def main(base_dir, output_dir):
+    for condition in ["control", "treatment"]:
+        df = load_bed_files(base_dir, condition)
+        plot_distributions(df, output_dir, condition)
 
 if __name__ == "__main__":
     import sys
