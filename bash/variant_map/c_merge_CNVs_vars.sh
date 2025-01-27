@@ -4,8 +4,8 @@
 #SBATCH --partition=unlimited
 #SBATCH --nodes=1
 #SBATCH --mem=64gb
-#SBATCH --output=log.CNV_merge_%j.out
-#SBATCH --error=log.CNV_merge_%j.err
+#SBATCH --output=logs/CNV_merge_%j.out
+#SBATCH --error=logs/CNV_merge_%j.err
 
 # Set paths
 FILEPATHS="$1"

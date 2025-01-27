@@ -3,7 +3,7 @@
 #SBATCH --partition=quick
 #SBATCH --nodes=1
 #SBATCH --mem=32gb
-#SBATCH --output=log.consensus_regions.%A_%a.out
+#SBATCH --output=logs/consensus_regions.%A_%a.out
 
 # Load conda environment
 source /public/apps/conda3/etc/profile.d/conda.sh

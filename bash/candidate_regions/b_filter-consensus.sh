@@ -6,8 +6,8 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=5  
 #SBATCH --mem=64gb         
-#SBATCH --output=log.filter-consensus_%A.out
-#SBATCH --error=log.filter-consensus_%A.err
+#SBATCH --output=logs/filter-consensus_%A.out
+#SBATCH --error=logs/filter-consensus_%A.err
 
 # Enable CPU binding for better thread performance
 export OMP_PROC_BIND=true

@@ -4,8 +4,8 @@
 #SBATCH --mem=32gb
 #SBATCH --time=4:00:00
 #SBATCH --job-name=seg_vis
-#SBATCH --output=log_seg_vis_%A_%a.out
-#SBATCH --error=log_seg_vis_%A_%a.err
+#SBATCH --output=logs/seg_vis_%A_%a.out
+#SBATCH --error=logs/seg_vis_%A_%a.err
 
 echo "Loading conda environment..."
 source /public/apps/conda3/etc/profile.d/conda.sh

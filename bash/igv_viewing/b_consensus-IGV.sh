@@ -4,8 +4,8 @@
 #SBATCH --mem=32gb
 #SBATCH --time=2:00:00
 #SBATCH --job-name=meth_vis
-#SBATCH --output=log.meth_vis_%A_%a.out
-#SBATCH --error=log.meth_vis_%A_%a.err
+#SBATCH --output=logs/meth_vis_%A_%a.out
+#SBATCH --error=logs/meth_vis_%A_%a.err
 =
 
 

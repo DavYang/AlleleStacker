@@ -4,8 +4,8 @@
 #SBATCH --partition=unlimited
 #SBATCH --nodes=1
 #SBATCH --mem=64gb
-#SBATCH --output=log.SV_merge_%j.out
-#SBATCH --error=log.SV_merge_%j.err
+#SBATCH --output=logs/SV_merge_%j.out
+#SBATCH --error=logs/SV_merge_%j.err
 
 # Set paths
 FILEPATHS="$1"

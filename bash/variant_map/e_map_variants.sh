@@ -58,7 +58,7 @@ fi
 
 # Run variant mapping
 echo "Running variant mapping for ${HAP}..."
-python3 "${PYTHON_DIR}/testmap_1-14.py" \
+python3 "${PYTHON_DIR}/variant_mapper-4.py" \
     --bed "$BED_FILE" \
     --haplotype "$HAP" \
     --output-prefix "${RUN_DIR}/${HAP}" \
@@ -75,45 +75,3 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "Completed variant mapping for ${HAP} at $(date)"
-
-# Create summary report
-echo "Generating summary report..."
-{
-    echo "Variant Mapping Run Summary"
-    echo "=========================="
-    echo "Run timestamp: ${TIMESTAMP}"
-    echo "Haplotype: ${HAP}"
-    echo ""
-    echo "Results:"
-    echo "  Methylated variants output file: ${RUN_DIR}/${HAP}_methylated_variants.tsv"
-    echo "  Unmethylated variants output file: ${RUN_DIR}/${HAP}_unmethylated_variants.tsv"
-    echo "  Rare variants output file: ${RUN_DIR}/${HAP}_rare_variants.tsv"
-    echo ""
-    echo "Variant counts by type:"
-    echo "----------------------"
-    for type in small cnv sv tr; do
-        count=$(grep -c "^.*\t${type}\t" "${RUN_DIR}/${HAP}_methylated_variants.tsv" || true)
-        count=$((count + $(grep -c "^.*\t${type}\t" "${RUN_DIR}/${HAP}_unmethylated_variants.tsv" || true)))
-        count=$((count + $(grep -c "^.*\t${type}\t" "${RUN_DIR}/${HAP}_rare_variants.tsv" || true)))
-        printf "%-6s: %8d\n" "$type" "$count"
-    done
-    echo ""
-    echo "Resource Usage:"
-    echo "  Runtime: $SECONDS seconds"
-    echo "  Memory peak: $(free -h | awk '/Mem:/ {print $3}')"
-    echo "  CPU usage: $(top -bn1 | grep "Cpu(s)" | awk '{print $2}')%"
-} > "${RUN_DIR}/${HAP}_summary.txt"
-
-echo "Summary report written to: ${RUN_DIR}/${HAP}_summary.txt"
-
-# Compress results
-echo "Compressing results..."
-tar -czf "${RUN_DIR}/${HAP}_results.tar.gz" \
-    "${RUN_DIR}/${HAP}_methylated_variants.tsv" \
-    "${RUN_DIR}/${HAP}_unmethylated_variants.tsv" \
-    "${RUN_DIR}/${HAP}_rare_variants.tsv" \
-    "${RUN_DIR}/${HAP}_summary.txt" \
-    "${RUN_DIR}/${HAP}.log"
-
-echo "Results compressed to: ${RUN_DIR}/${HAP}_results.tar.gz"
-echo "All done!"

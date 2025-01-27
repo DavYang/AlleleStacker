@@ -4,8 +4,8 @@
 #SBATCH --mem=32gb
 #SBATCH --time=2:00:00
 #SBATCH --job-name=meth_vis
-#SBATCH --output=log.IGV-all_%A_%a.out
-#SBATCH --error=log.IGV-all_%A_%a.err
+#SBATCH --output=logs/IGV-all_%A_%a.out
+#SBATCH --error=logs/IGV-all_%A_%a.err
 #SBATCH --array=0-1
 
 # Exit on error, undefined variables, and pipe failures
@@ -27,7 +27,7 @@ conda activate anc_vig
 INPUT_DIR="$1"
 OUTPUT_DIR="$2"
 SCRIPT_DIR="python/igv_viewing"
-SAMPLE_LIST="/gs/gsfs0/shared-lab/greally-lab/David/AlleleStacker_tests/AlleleStacker/bash/pileup_QC/sample_list.txt"
+SAMPLE_LIST="$3"
 
 mkdir -p $OUTPUT_DIR
 

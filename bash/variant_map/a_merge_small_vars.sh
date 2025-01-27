@@ -4,8 +4,8 @@
 #SBATCH --partition=unlimited
 #SBATCH --nodes=1
 #SBATCH --mem=64gb
-#SBATCH --output=log.SNP_merge_%j.out
-#SBATCH --error=log.SNP_merge_%j.err
+#SBATCH --output=logs/SNP_merge_%j.out
+#SBATCH --error=logs/SNP_merge_%j.err
 
 # Exit on error
 set -e

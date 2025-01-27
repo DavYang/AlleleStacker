@@ -5,8 +5,8 @@
 #SBATCH --mail-type=END,FAIL
 #SBATCH --nodes=1
 #SBATCH --mem=64gb
-#SBATCH --output=log.vcf_merge_%j.out
-#SBATCH --error=log.vcf_merge_%j.err
+#SBATCH --output=logs/tandem_merge_%j.out
+#SBATCH --error=logs/tandem_merge_%j.err
 
 # Set paths
 FILEPATHS="$1"
