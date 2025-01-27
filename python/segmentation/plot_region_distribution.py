@@ -10,15 +10,22 @@ def load_bed_files(base_dir, condition):
     path = Path(base_dir) / condition
     dfs = []
     
+    print(f"Loading BED files for {condition} from {path}")
+    
     for bed_file in path.glob('*.bed'):
         df = pd.read_csv(bed_file, sep='\t')
         df['sample'] = bed_file.stem
         dfs.append(df)
     
-    return pd.concat(dfs, ignore_index=True) if dfs else None
+    if dfs:
+        return pd.concat(dfs, ignore_index=True)
+    else:
+        print(f"No BED files found for {condition}")
+        return None
 
 def plot_distributions(df, output_dir, condition):
     if df is None:
+        print(f"Skipping plotting distributions for {condition} as no data was loaded.")
         return
         
     output_dir = Path(output_dir)
@@ -29,6 +36,8 @@ def plot_distributions(df, output_dir, condition):
     df_filtered = df[df['chrom'].isin(autosomes_and_sex_chromosomes)]
 
     samples = df_filtered['sample'].unique()
+    
+    print(f"Plotting distributions for {condition} with {len(samples)} samples.")
     
     # Chromosome density plot
     chromosomes = sorted(df_filtered['chrom'].unique(), 
@@ -66,15 +75,10 @@ def plot_distributions(df, output_dir, condition):
     }).round(2)
     stats.to_csv(output_dir / f'{condition}_summary_stats.csv')
 
-def main(base_dir, output_dir):
-    conditions = ['H1_M', 'H1', 'H2']
-    
-    for condition in conditions:
-        df = load_bed_files(base_dir, condition)
-        plot_distributions(df, output_dir, condition)
-
 if __name__ == "__main__":
     import sys
     base_dir = sys.argv[1]
     output_dir = sys.argv[2]
+    
+    print(f"Running with base directory: {base_dir} and output directory: {output_dir}")
     main(base_dir, output_dir)
