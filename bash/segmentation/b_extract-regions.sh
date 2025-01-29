@@ -44,8 +44,11 @@ process_bed() {
         counts[combined_label]++
     }
     END {
-        for (label in counts) {
-            print label "\t" counts[label] > temp "/" sample "_counts.txt"
+        # Write counts for all possible states, even if zero
+        states[1] = hap "_M"
+        states[2] = hap "_U"
+        for (i in states) {
+            print sample "\t" hap "\t" states[i] "\t" (counts[states[i]] ? counts[states[i]] : 0) >> temp "/" sample "_counts.txt"
         }
     }' OFS='\t' "$bed_file"
 }
@@ -74,10 +77,19 @@ done
         spm=${spm_dir%/}
         echo -n "$spm"
         
-        # Get counts for each combined state
+        # Create associative array for counts
+        declare -A state_counts=([H1_M]=0 [H1_U]=0 [H2_M]=0 [H2_U]=0)
+        
+        # Read counts file if it exists
+        if [ -f "$temp_dir/${spm}_counts.txt" ]; then
+            while IFS=$'\t' read -r sample hap state count; do
+                state_counts[$state]=$count
+            done < "$temp_dir/${spm}_counts.txt"
+        fi
+        
+        # Output counts in fixed order
         for state in H1_M H1_U H2_M H2_U; do
-            count=$(grep -P "^${state}\t" "$temp_dir/${spm}_counts.txt" 2>/dev/null | cut -f2)
-            echo -n -e "\t${count:-0}"
+            echo -n -e "\t${state_counts[$state]}"
         done
         echo
     done

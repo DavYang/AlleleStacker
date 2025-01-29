@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH --time=4:00:00
-#SBATCH --partition=quick
-#SBATCH --nodes=1
-#SBATCH --mem=32gb
+#SBATCH --time=2-00:00:00
+#SBATCH --partition=normal
+#SBATCH --nodes=5
+#SBATCH --mem=64gb
 #SBATCH --output=logs/consensus_regions.%A_%a.out
 
 # Load conda environment
@@ -12,7 +12,7 @@ conda activate anc_vig
 # Set your parameters
 INPUT_DIR="$1"
 OUTPUT_DIR="$2"
-OUTPUT_PREFIX="unmethylated_regions"
+OUTPUT_PREFIX="methylated_regions"
 
 MIN_SAMPLES=10
 MAX_GAP=500
@@ -23,7 +23,7 @@ SAMPLE_LIST_FILE="./bash/pileup_QC/sample_list.txt"
 mkdir -p $OUTPUT_DIR
 
 # Call the Python script
-python $PYTHON/consensus_regions.py \
+python $PYTHON/consensus_regions_meth.py \
   --input_dir $INPUT_DIR \
   --output_prefix $OUTPUT_PREFIX \
   --output_dir $OUTPUT_DIR \

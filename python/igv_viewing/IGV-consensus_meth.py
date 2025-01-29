@@ -7,7 +7,7 @@ from pathlib import Path
 
 def process_bed_file(input_file, output_file):
     """
-    Process a BED file to extract chrom, start, end columns and add LIGHT BLUE color
+    Process a BED file to extract chrom, start, end columns and add LIGHT PINK color
     """
     print(f"Processing file: {input_file}")
     
@@ -23,8 +23,8 @@ def process_bed_file(input_file, output_file):
             start = fields[1]
             end = fields[2]
             
-            # Write the modified line with LIGHT BLUE color
-            output_line = f"{chrom}\t{start}\t{end}\tconsensus_region\t0\t.\t{start}\t{end}\t0,191,255\n"
+            # Write the modified line with LIGHT PINK color
+            output_line = f"{chrom}\t{start}\t{end}\tmeth_consensus_region\t0\t.\t{start}\t{end}\t255,182,193\n"
             fout.write(output_line)
             line_count += 1
         
@@ -46,8 +46,7 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
     
     # Specifically look for H1 and H2 files only
-    input_files = ['unmethylated_regions_H1.bed', 'unmethylated_regions_H2.bed']
-    # input_files = ['methylated_regions_H1.bed', 'methylated_regions_H2.bed']
+    input_files = ['methylated_regions_H1.bed', 'methylated_regions_H2.bed']
 
     for filename in input_files:
         input_file = input_dir / filename

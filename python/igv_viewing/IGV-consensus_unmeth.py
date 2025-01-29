@@ -24,7 +24,7 @@ def process_bed_file(input_file, output_file):
             end = fields[2]
             
             # Write the modified line with LIGHT BLUE color
-            output_line = f"{chrom}\t{start}\t{end}\tconsensus_region\t0\t.\t{start}\t{end}\t0,191,255\n"
+            output_line = f"{chrom}\t{start}\t{end}\tunmeth_consensus_region\t0\t.\t{start}\t{end}\t0,191,255\n"
             fout.write(output_line)
             line_count += 1
         

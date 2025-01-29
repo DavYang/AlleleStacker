@@ -6,7 +6,7 @@
 #SBATCH --job-name=meth_vis
 #SBATCH --output=logs/meth_vis_%A_%a.out
 #SBATCH --error=logs/meth_vis_%A_%a.err
-=
+
 
 
 # Load conda environment
@@ -22,7 +22,9 @@ SCRIPT_DIR="python/igv_viewing"
 mkdir -p "$OUTPUT_DIR"
 
 # Run the Python script
-python3 $SCRIPT_DIR/IGV-consensus.py "$INPUT_DIR" "$OUTPUT_DIR"
+# python3 $SCRIPT_DIR/IGV-consensus.py "$INPUT_DIR" "$OUTPUT_DIR"
+# python3 $SCRIPT_DIR/IGV-consensus_unmeth.py "$INPUT_DIR" "$OUTPUT_DIR"
+python3 $SCRIPT_DIR/IGV-consensus_meth.py "$INPUT_DIR" "$OUTPUT_DIR"
 
 # Check if the processing was successful
 if [ $? -eq 0 ]; then
