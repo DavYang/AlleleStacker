@@ -22,4 +22,5 @@ OUTPUT_DIR=$2
 mkdir -p "$OUTPUT_DIR"
 mkdir -p logs
 
-python plot_regions.py --base_dir "$INPUT_DIR" --output_dir "$OUTPUT_DIR"
+
+python python/segmentation/plot_region_distribution_counts.py --base_dir "$INPUT_DIR" --output_dir "$OUTPUT_DIR"
