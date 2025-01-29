@@ -104,6 +104,7 @@ if [ -f "PASSINGDIR/SAMPLENAME.filtered.hap1.bed" ]; then
         --input-prefix "SAMPLENAME.haplotype1" \
         --output-prefix "OUTPUTDIR/SAMPLENAME.hap1" \
         --condense-bed-labels \
+        --enable-nodata-segments \
         --min-cpgs 5 \
         --max-gap 500
     
@@ -122,6 +123,7 @@ if [ -f "PASSINGDIR/SAMPLENAME.filtered.hap2.bed" ]; then
     METHBAT segment \
         --input-prefix "SAMPLENAME.haplotype2" \
         --output-prefix "OUTPUTDIR/SAMPLENAME.hap2" \
+        --enable-nodata-segments \
         --condense-bed-labels \
         --min-cpgs 5 \
         --max-gap 500
