@@ -39,7 +39,7 @@ methbat="/gs/gsfs0/shared-lab/greally-lab/David/software/methbat-v0.13.2-x86_64-
 
 # Iterate through each sample directory
 cd "$MAIN_DIR" || exit 1
-sample_dirs=$(find . -maxdepth 1 -type d -name 'SPM*')
+sample_dirs=$(find . -maxdepth 1 -type d -name 'R0*')
 echo "Found sample directories: $sample_dirs"
 
 if [ -z "$sample_dirs" ]; then
@@ -104,7 +104,6 @@ if [ -f "PASSINGDIR/SAMPLENAME.filtered.hap1.bed" ]; then
         --input-prefix "SAMPLENAME.haplotype1" \
         --output-prefix "OUTPUTDIR/SAMPLENAME.hap1" \
         --condense-bed-labels \
-        --enable-nodata-segments \
         --min-cpgs 5 \
         --max-gap 500
     
@@ -123,7 +122,6 @@ if [ -f "PASSINGDIR/SAMPLENAME.filtered.hap2.bed" ]; then
     METHBAT segment \
         --input-prefix "SAMPLENAME.haplotype2" \
         --output-prefix "OUTPUTDIR/SAMPLENAME.hap2" \
-        --enable-nodata-segments \
         --condense-bed-labels \
         --min-cpgs 5 \
         --max-gap 500

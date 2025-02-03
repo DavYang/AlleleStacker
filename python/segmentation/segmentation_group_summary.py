@@ -6,7 +6,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 def generate_summary(sample_dir, output_file):
-   samples = sorted([d for d in Path(sample_dir).glob('SPM*') if d.is_dir()])
+   samples = sorted([d for d in Path(sample_dir).glob('R0*') if d.is_dir()])
    data = []
    
    for sample_path in samples:

@@ -15,7 +15,7 @@ conda activate anc_vig
 mkdir -p "$2"
 mkdir -p logs
 
-SAMPLES=($(ls -d "$1"/SPM* | grep -v "log_files\|regions_by_label\|segmentation_scripts" | xargs -n1 basename | sort))
+SAMPLES=($(ls -d "$1"/R0* | grep -v "log_files\|regions_by_label\|segmentation_scripts" | xargs -n1 basename | sort))
 CURRENT_INDEX=$((SLURM_ARRAY_TASK_ID - 1))
 SAMPLE=${SAMPLES[$CURRENT_INDEX]}
 PYTHON="./python/segmentation"

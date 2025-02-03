@@ -79,7 +79,7 @@ def region_generator(file_path: str, sample_id: str) -> Iterator[Region]:
         print(f"Error processing file {file_path}: {str(e)}")
         return []
 
-def merge_regions(regions: List[Region], max_gap: int = 500, min_samples: int = 10) -> List[Region]:
+def merge_regions(regions: List[Region], max_gap: int = 500, min_samples: int = 2) -> List[Region]:
     """
     Merge regions with improved sample tracking to ensure proper consensus generation.
     Each sample can only contribute one region to each consensus.

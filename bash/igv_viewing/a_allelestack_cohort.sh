@@ -39,7 +39,7 @@ echo "Starting processing at $(date)"
 echo "Processing haplotype: $HAPLOTYPE"
 
 # Run the processing script for this haplotype
-python ${SCRIPT_DIR}/IGV-all-samples.py \
+python ${SCRIPT_DIR}/a_allelestack_cohort.py \
     --input_dir "$INPUT_DIR" \
     --output_dir "$OUTPUT_DIR" \
     --haplotype "$HAPLOTYPE" \
@@ -49,7 +49,7 @@ python ${SCRIPT_DIR}/IGV-all-samples.py \
 echo "Python processing completed at $(date)"
 
 # Set up output file names
-BED_FILE="${OUTPUT_DIR}/igv_cohort_${HAPLOTYPE,,}.bed"
+BED_FILE="${OUTPUT_DIR}/allelestack_${HAPLOTYPE,,}.bed"
 
 if [[ -f "$BED_FILE" ]]; then
     echo "Processing output files..."

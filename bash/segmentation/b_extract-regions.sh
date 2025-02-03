@@ -55,14 +55,14 @@ process_bed() {
 
 # Process each sample directory
 cd "$input_dir"
-for spm_dir in SPM*; do
-    [ ! -d "$spm_dir" ] && continue
-    echo "Processing $spm_dir..."
+for R0_dir in R0*; do
+    [ ! -d "$R0_dir" ] && continue
+    echo "Processing $R0_dir..."
     
     # Process both haplotypes
     for hap in hap1 hap2; do
-        bed_file="$spm_dir/${spm_dir}.${hap}.meth_regions.bed"
-        process_bed "$bed_file" "${spm_dir}" "$hap"
+        bed_file="$R0_dir/${R0_dir}.${hap}.meth_regions.bed"
+        process_bed "$bed_file" "${R0_dir}" "$hap"
     done
 done
 
@@ -72,19 +72,19 @@ done
     echo -e "Sample\tH1_M\tH1_U\tH2_M\tH2_U"
     
     # Process each sample
-    for spm_dir in SPM*/; do
-        [ ! -d "$spm_dir" ] && continue
-        spm=${spm_dir%/}
-        echo -n "$spm"
+    for R0_dir in R0*/; do
+        [ ! -d "$R0_dir" ] && continue
+        R0=${R0_dir%/}
+        echo -n "$R0"
         
         # Create associative array for counts
         declare -A state_counts=([H1_M]=0 [H1_U]=0 [H2_M]=0 [H2_U]=0)
         
         # Read counts file if it exists
-        if [ -f "$temp_dir/${spm}_counts.txt" ]; then
+        if [ -f "$temp_dir/${R0}_counts.txt" ]; then
             while IFS=$'\t' read -r sample hap state count; do
                 state_counts[$state]=$count
-            done < "$temp_dir/${spm}_counts.txt"
+            done < "$temp_dir/${R0}_counts.txt"
         fi
         
         # Output counts in fixed order
