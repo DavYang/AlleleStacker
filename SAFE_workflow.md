@@ -8,7 +8,7 @@ Generate communal NYCRD github with shared credentials
 
 AlleleStacker Configuration To Dos:
 
-Step 1: CpG Pileup QC
+Step 1: CpG Pileup QC (requires downloading hg38 reference genome) : https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/GRCh38_reference_genome/
 Step 2: Segmentation
 Step 3: Candidate Region Generation 
 Step 4: Allele Stack Generation
